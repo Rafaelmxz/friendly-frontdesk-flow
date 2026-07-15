@@ -34,7 +34,9 @@ function AppHome() {
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <CardTitle>Bem-vindo, {data.fullName || "hóspede"}</CardTitle>
+            <CardTitle>
+              Bem-vindo, {data.fullName || "hóspede"} — {roleLabel(data.role)} em {data.hotelName}
+            </CardTitle>
             <CardDescription>
               {data.hotelName}
             </CardDescription>
