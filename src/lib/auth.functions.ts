@@ -118,16 +118,19 @@ export const createInvite = createServerFn({ method: "POST" })
       return { ok: false as const, error: GENERIC_CREATE_INVITE_ERROR };
     }
 
-    const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
-      _user_id: userId,
-      _hotel_id: profile.hotel_id,
-      _role: "admin",
-    });
+    const { data: adminRow, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("hotel_id", profile.hotel_id)
+      .eq("role", "admin")
+      .maybeSingle();
 
-    if (roleError || !isAdmin) {
+    if (roleError || !adminRow) {
       console.error("[createInvite] not admin", roleError);
       return { ok: false as const, error: "Apenas administradores podem convidar." };
     }
+
 
     const token = generateToken();
 
