@@ -80,14 +80,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "PMS — Gestão hoteleira multi-tenant" },
+      { name: "description", content: "Sistema de gestão hoteleira para múltiplas propriedades: quartos, reservas, hóspedes e pagamentos." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "PMS — Gestão hoteleira multi-tenant" },
+      { property: "og:description", content: "Sistema de gestão hoteleira para múltiplas propriedades: quartos, reservas, hóspedes e pagamentos." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "PMS — Gestão hoteleira multi-tenant" },
+      { name: "twitter:description", content: "Sistema de gestão hoteleira para múltiplas propriedades: quartos, reservas, hóspedes e pagamentos." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/744fa63b-fac2-4ca4-b9a8-23db8cbc6cc0/id-preview-4a2ecaaf--be431421-f6ad-4d7b-a2c4-0f16dbbce115.lovable.app-1784124955931.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/744fa63b-fac2-4ca4-b9a8-23db8cbc6cc0/id-preview-4a2ecaaf--be431421-f6ad-4d7b-a2c4-0f16dbbce115.lovable.app-1784124955931.png" },
     ],
     links: [
       {
