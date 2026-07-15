@@ -435,7 +435,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      search_guests: {
+        Args: { q: string }
+        Returns: {
+          birth_date: string | null
+          created_at: string
+          document_number: string | null
+          document_type: string | null
+          email: string | null
+          full_name: string
+          hotel_id: string
+          id: string
+          nationality: string | null
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "guests"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
     }
     Enums: {
       app_role: "admin" | "recepcionista"
