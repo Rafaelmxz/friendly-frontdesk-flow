@@ -15,6 +15,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as AuthenticatedEquipeRouteImport } from './routes/_authenticated/equipe'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedTiposDeQuartoIndexRouteImport } from './routes/_authenticated/tipos-de-quarto.index'
+import { Route as AuthenticatedQuartosIndexRouteImport } from './routes/_authenticated/quartos.index'
+import { Route as AuthenticatedHospedesIndexRouteImport } from './routes/_authenticated/hospedes.index'
+import { Route as AuthenticatedTiposDeQuartoNovoRouteImport } from './routes/_authenticated/tipos-de-quarto.novo'
+import { Route as AuthenticatedQuartosNovoRouteImport } from './routes/_authenticated/quartos.novo'
+import { Route as AuthenticatedHospedesNovoRouteImport } from './routes/_authenticated/hospedes.novo'
+import { Route as AuthenticatedTiposDeQuartoIdEditarRouteImport } from './routes/_authenticated/tipos-de-quarto.$id.editar'
+import { Route as AuthenticatedQuartosIdEditarRouteImport } from './routes/_authenticated/quartos.$id.editar'
+import { Route as AuthenticatedHospedesIdEditarRouteImport } from './routes/_authenticated/hospedes.$id.editar'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -45,6 +54,60 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   path: '/app',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTiposDeQuartoIndexRoute =
+  AuthenticatedTiposDeQuartoIndexRouteImport.update({
+    id: '/tipos-de-quarto/',
+    path: '/tipos-de-quarto/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuartosIndexRoute =
+  AuthenticatedQuartosIndexRouteImport.update({
+    id: '/quartos/',
+    path: '/quartos/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHospedesIndexRoute =
+  AuthenticatedHospedesIndexRouteImport.update({
+    id: '/hospedes/',
+    path: '/hospedes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTiposDeQuartoNovoRoute =
+  AuthenticatedTiposDeQuartoNovoRouteImport.update({
+    id: '/tipos-de-quarto/novo',
+    path: '/tipos-de-quarto/novo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuartosNovoRoute =
+  AuthenticatedQuartosNovoRouteImport.update({
+    id: '/quartos/novo',
+    path: '/quartos/novo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHospedesNovoRoute =
+  AuthenticatedHospedesNovoRouteImport.update({
+    id: '/hospedes/novo',
+    path: '/hospedes/novo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTiposDeQuartoIdEditarRoute =
+  AuthenticatedTiposDeQuartoIdEditarRouteImport.update({
+    id: '/tipos-de-quarto/$id/editar',
+    path: '/tipos-de-quarto/$id/editar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedQuartosIdEditarRoute =
+  AuthenticatedQuartosIdEditarRouteImport.update({
+    id: '/quartos/$id/editar',
+    path: '/quartos/$id/editar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHospedesIdEditarRoute =
+  AuthenticatedHospedesIdEditarRouteImport.update({
+    id: '/hospedes/$id/editar',
+    path: '/hospedes/$id/editar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +115,15 @@ export interface FileRoutesByFullPath {
   '/app': typeof AuthenticatedAppRoute
   '/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
+  '/quartos/novo': typeof AuthenticatedQuartosNovoRoute
+  '/tipos-de-quarto/novo': typeof AuthenticatedTiposDeQuartoNovoRoute
+  '/hospedes/': typeof AuthenticatedHospedesIndexRoute
+  '/quartos/': typeof AuthenticatedQuartosIndexRoute
+  '/tipos-de-quarto/': typeof AuthenticatedTiposDeQuartoIndexRoute
+  '/hospedes/$id/editar': typeof AuthenticatedHospedesIdEditarRoute
+  '/quartos/$id/editar': typeof AuthenticatedQuartosIdEditarRoute
+  '/tipos-de-quarto/$id/editar': typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +131,15 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppRoute
   '/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
+  '/quartos/novo': typeof AuthenticatedQuartosNovoRoute
+  '/tipos-de-quarto/novo': typeof AuthenticatedTiposDeQuartoNovoRoute
+  '/hospedes': typeof AuthenticatedHospedesIndexRoute
+  '/quartos': typeof AuthenticatedQuartosIndexRoute
+  '/tipos-de-quarto': typeof AuthenticatedTiposDeQuartoIndexRoute
+  '/hospedes/$id/editar': typeof AuthenticatedHospedesIdEditarRoute
+  '/quartos/$id/editar': typeof AuthenticatedQuartosIdEditarRoute
+  '/tipos-de-quarto/$id/editar': typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +149,49 @@ export interface FileRoutesById {
   '/_authenticated/app': typeof AuthenticatedAppRoute
   '/_authenticated/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/_authenticated/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
+  '/_authenticated/quartos/novo': typeof AuthenticatedQuartosNovoRoute
+  '/_authenticated/tipos-de-quarto/novo': typeof AuthenticatedTiposDeQuartoNovoRoute
+  '/_authenticated/hospedes/': typeof AuthenticatedHospedesIndexRoute
+  '/_authenticated/quartos/': typeof AuthenticatedQuartosIndexRoute
+  '/_authenticated/tipos-de-quarto/': typeof AuthenticatedTiposDeQuartoIndexRoute
+  '/_authenticated/hospedes/$id/editar': typeof AuthenticatedHospedesIdEditarRoute
+  '/_authenticated/quartos/$id/editar': typeof AuthenticatedQuartosIdEditarRoute
+  '/_authenticated/tipos-de-quarto/$id/editar': typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/app' | '/equipe' | '/invite/$token'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/app'
+    | '/equipe'
+    | '/invite/$token'
+    | '/hospedes/novo'
+    | '/quartos/novo'
+    | '/tipos-de-quarto/novo'
+    | '/hospedes/'
+    | '/quartos/'
+    | '/tipos-de-quarto/'
+    | '/hospedes/$id/editar'
+    | '/quartos/$id/editar'
+    | '/tipos-de-quarto/$id/editar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app' | '/equipe' | '/invite/$token'
+  to:
+    | '/'
+    | '/auth'
+    | '/app'
+    | '/equipe'
+    | '/invite/$token'
+    | '/hospedes/novo'
+    | '/quartos/novo'
+    | '/tipos-de-quarto/novo'
+    | '/hospedes'
+    | '/quartos'
+    | '/tipos-de-quarto'
+    | '/hospedes/$id/editar'
+    | '/quartos/$id/editar'
+    | '/tipos-de-quarto/$id/editar'
   id:
     | '__root__'
     | '/'
@@ -82,6 +200,15 @@ export interface FileRouteTypes {
     | '/_authenticated/app'
     | '/_authenticated/equipe'
     | '/invite/$token'
+    | '/_authenticated/hospedes/novo'
+    | '/_authenticated/quartos/novo'
+    | '/_authenticated/tipos-de-quarto/novo'
+    | '/_authenticated/hospedes/'
+    | '/_authenticated/quartos/'
+    | '/_authenticated/tipos-de-quarto/'
+    | '/_authenticated/hospedes/$id/editar'
+    | '/_authenticated/quartos/$id/editar'
+    | '/_authenticated/tipos-de-quarto/$id/editar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -135,17 +262,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/tipos-de-quarto/': {
+      id: '/_authenticated/tipos-de-quarto/'
+      path: '/tipos-de-quarto'
+      fullPath: '/tipos-de-quarto/'
+      preLoaderRoute: typeof AuthenticatedTiposDeQuartoIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quartos/': {
+      id: '/_authenticated/quartos/'
+      path: '/quartos'
+      fullPath: '/quartos/'
+      preLoaderRoute: typeof AuthenticatedQuartosIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hospedes/': {
+      id: '/_authenticated/hospedes/'
+      path: '/hospedes'
+      fullPath: '/hospedes/'
+      preLoaderRoute: typeof AuthenticatedHospedesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tipos-de-quarto/novo': {
+      id: '/_authenticated/tipos-de-quarto/novo'
+      path: '/tipos-de-quarto/novo'
+      fullPath: '/tipos-de-quarto/novo'
+      preLoaderRoute: typeof AuthenticatedTiposDeQuartoNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quartos/novo': {
+      id: '/_authenticated/quartos/novo'
+      path: '/quartos/novo'
+      fullPath: '/quartos/novo'
+      preLoaderRoute: typeof AuthenticatedQuartosNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hospedes/novo': {
+      id: '/_authenticated/hospedes/novo'
+      path: '/hospedes/novo'
+      fullPath: '/hospedes/novo'
+      preLoaderRoute: typeof AuthenticatedHospedesNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tipos-de-quarto/$id/editar': {
+      id: '/_authenticated/tipos-de-quarto/$id/editar'
+      path: '/tipos-de-quarto/$id/editar'
+      fullPath: '/tipos-de-quarto/$id/editar'
+      preLoaderRoute: typeof AuthenticatedTiposDeQuartoIdEditarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/quartos/$id/editar': {
+      id: '/_authenticated/quartos/$id/editar'
+      path: '/quartos/$id/editar'
+      fullPath: '/quartos/$id/editar'
+      preLoaderRoute: typeof AuthenticatedQuartosIdEditarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hospedes/$id/editar': {
+      id: '/_authenticated/hospedes/$id/editar'
+      path: '/hospedes/$id/editar'
+      fullPath: '/hospedes/$id/editar'
+      preLoaderRoute: typeof AuthenticatedHospedesIdEditarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRoute
   AuthenticatedEquipeRoute: typeof AuthenticatedEquipeRoute
+  AuthenticatedHospedesNovoRoute: typeof AuthenticatedHospedesNovoRoute
+  AuthenticatedQuartosNovoRoute: typeof AuthenticatedQuartosNovoRoute
+  AuthenticatedTiposDeQuartoNovoRoute: typeof AuthenticatedTiposDeQuartoNovoRoute
+  AuthenticatedHospedesIndexRoute: typeof AuthenticatedHospedesIndexRoute
+  AuthenticatedQuartosIndexRoute: typeof AuthenticatedQuartosIndexRoute
+  AuthenticatedTiposDeQuartoIndexRoute: typeof AuthenticatedTiposDeQuartoIndexRoute
+  AuthenticatedHospedesIdEditarRoute: typeof AuthenticatedHospedesIdEditarRoute
+  AuthenticatedQuartosIdEditarRoute: typeof AuthenticatedQuartosIdEditarRoute
+  AuthenticatedTiposDeQuartoIdEditarRoute: typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRoute,
   AuthenticatedEquipeRoute: AuthenticatedEquipeRoute,
+  AuthenticatedHospedesNovoRoute: AuthenticatedHospedesNovoRoute,
+  AuthenticatedQuartosNovoRoute: AuthenticatedQuartosNovoRoute,
+  AuthenticatedTiposDeQuartoNovoRoute: AuthenticatedTiposDeQuartoNovoRoute,
+  AuthenticatedHospedesIndexRoute: AuthenticatedHospedesIndexRoute,
+  AuthenticatedQuartosIndexRoute: AuthenticatedQuartosIndexRoute,
+  AuthenticatedTiposDeQuartoIndexRoute: AuthenticatedTiposDeQuartoIndexRoute,
+  AuthenticatedHospedesIdEditarRoute: AuthenticatedHospedesIdEditarRoute,
+  AuthenticatedQuartosIdEditarRoute: AuthenticatedQuartosIdEditarRoute,
+  AuthenticatedTiposDeQuartoIdEditarRoute:
+    AuthenticatedTiposDeQuartoIdEditarRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
