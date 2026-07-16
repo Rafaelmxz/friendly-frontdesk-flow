@@ -28,9 +28,12 @@ function AuthenticatedLayout() {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-4 flex-wrap">
             <Link to="/app" className="font-semibold">PMS</Link>
             <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">Painel</Link>
+            <Link to="/quartos" className="text-sm text-muted-foreground hover:text-foreground">Quartos</Link>
+            <Link to="/tipos-de-quarto" className="text-sm text-muted-foreground hover:text-foreground">Tipos</Link>
+            <Link to="/hospedes" className="text-sm text-muted-foreground hover:text-foreground">Hóspedes</Link>
             <Link to="/equipe" className="text-sm text-muted-foreground hover:text-foreground">Equipe</Link>
           </nav>
           <Button variant="ghost" size="sm" onClick={handleLogout}>Sair</Button>
