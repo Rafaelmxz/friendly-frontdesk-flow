@@ -35,7 +35,7 @@ export function RoomTypeForm({ mode, id, initial }: Props) {
   const [maxOccupancy, setMaxOccupancy] = useState(String(initial?.max_occupancy ?? "2"));
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const mutation = useMutation({
+  const mutation = useMutation<unknown, Error, unknown>({
     mutationFn: async (input: unknown) => {
       if (mode === "create") return createFn({ data: { input } });
       return updateFn({ data: { id: id!, input } });
@@ -45,7 +45,7 @@ export function RoomTypeForm({ mode, id, initial }: Props) {
       toast.success(mode === "create" ? "Tipo criado." : "Alterações salvas.");
       navigate({ to: "/tipos-de-quarto" });
     },
-    onError: handleMutationError,
+    onError: (err) => handleMutationError(err),
   });
 
   function handleSubmit(e: FormEvent) {

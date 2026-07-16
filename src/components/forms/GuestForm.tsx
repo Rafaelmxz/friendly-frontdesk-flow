@@ -56,7 +56,7 @@ export function GuestForm({ mode, id, initial }: Props) {
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const mutation = useMutation({
+  const mutation = useMutation<unknown, Error, unknown>({
     mutationFn: async (input: unknown) => {
       if (mode === "create") return createFn({ data: { input } });
       return updateFn({ data: { id: id!, input } });
@@ -66,7 +66,7 @@ export function GuestForm({ mode, id, initial }: Props) {
       toast.success(mode === "create" ? "Hóspede criado." : "Alterações salvas.");
       navigate({ to: "/hospedes" });
     },
-    onError: handleMutationError,
+    onError: (err) => handleMutationError(err),
   });
 
   function handleSubmit(e: FormEvent) {

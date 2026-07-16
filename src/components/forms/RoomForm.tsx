@@ -47,7 +47,7 @@ export function RoomForm({ mode, id, roomTypes, initial }: Props) {
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const mutation = useMutation({
+  const mutation = useMutation<unknown, Error, unknown>({
     mutationFn: async (input: unknown) => {
       if (mode === "create") return createFn({ data: { input } });
       return updateFn({ data: { id: id!, input } });
@@ -57,7 +57,7 @@ export function RoomForm({ mode, id, roomTypes, initial }: Props) {
       toast.success(mode === "create" ? "Quarto criado." : "Alterações salvas.");
       navigate({ to: "/quartos" });
     },
-    onError: handleMutationError,
+    onError: (err) => handleMutationError(err),
   });
 
   function handleSubmit(e: FormEvent) {
