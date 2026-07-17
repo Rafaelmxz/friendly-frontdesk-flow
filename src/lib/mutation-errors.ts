@@ -4,7 +4,12 @@ export function handleMutationError(err: unknown, fallback = "Não foi possível
   const anyErr = err as { code?: string; message?: string } | undefined;
   const msg = anyErr?.message ?? "";
   const code = anyErr?.code ?? "";
+  if (code === "23P01" || /exclusion|conflicting key value|overlap/i.test(msg)) {
+    toast.error("Este quarto já está reservado nesse período.");
+    return;
+  }
   if (code === "42501" || /row-level security|permission denied/i.test(msg)) {
+
     toast.error("Você não tem permissão para essa ação.");
     return;
   }
