@@ -69,6 +69,43 @@ export const roomSchema = z.object({
 });
 export type RoomInput = z.infer<typeof roomSchema>;
 
+export const reservationStatusInitialSchema = z.enum(["pendente", "confirmada"]);
+export const reservationStatusEditSchema = z.enum(["pendente", "confirmada"]);
+
+export const reservationSchema = z
+  .object({
+    guest_id: z.string().uuid("Selecione um hóspede"),
+    room_id: z.string().uuid("Selecione um quarto"),
+    check_in: z.string().min(1, "Data de check-in obrigatória"),
+    check_out: z.string().min(1, "Data de check-out obrigatória"),
+    adults: z.coerce.number().int().min(1, "Mínimo 1 adulto").max(20),
+    children: z.coerce.number().int().min(0).max(20),
+    total_amount: z.coerce.number().nonnegative("Total deve ser ≥ 0"),
+    status: reservationStatusInitialSchema,
+    notes: z.string().trim().max(1000).optional().or(z.literal("")),
+  })
+  .superRefine((data, ctx) => {
+    if (data.check_out <= data.check_in) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["check_out"],
+        message: "Check-out deve ser após o check-in",
+      });
+    }
+  })
+  .transform((d) => ({
+    guest_id: d.guest_id,
+    room_id: d.room_id,
+    check_in: d.check_in,
+    check_out: d.check_out,
+    adults: d.adults,
+    children: d.children,
+    total_amount: d.total_amount,
+    status: d.status,
+    notes: d.notes || undefined,
+  }));
+export type ReservationInput = z.infer<typeof reservationSchema>;
+
 export function zodErrorMap(err: z.ZodError): Record<string, string> {
   const map: Record<string, string> = {};
   for (const issue of err.issues) {
@@ -77,3 +114,4 @@ export function zodErrorMap(err: z.ZodError): Record<string, string> {
   }
   return map;
 }
+

@@ -16,12 +16,15 @@ import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as AuthenticatedEquipeRouteImport } from './routes/_authenticated/equipe'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedTiposDeQuartoIndexRouteImport } from './routes/_authenticated/tipos-de-quarto.index'
+import { Route as AuthenticatedReservasIndexRouteImport } from './routes/_authenticated/reservas.index'
 import { Route as AuthenticatedQuartosIndexRouteImport } from './routes/_authenticated/quartos.index'
 import { Route as AuthenticatedHospedesIndexRouteImport } from './routes/_authenticated/hospedes.index'
 import { Route as AuthenticatedTiposDeQuartoNovoRouteImport } from './routes/_authenticated/tipos-de-quarto.novo'
+import { Route as AuthenticatedReservasNovoRouteImport } from './routes/_authenticated/reservas.novo'
 import { Route as AuthenticatedQuartosNovoRouteImport } from './routes/_authenticated/quartos.novo'
 import { Route as AuthenticatedHospedesNovoRouteImport } from './routes/_authenticated/hospedes.novo'
 import { Route as AuthenticatedTiposDeQuartoIdEditarRouteImport } from './routes/_authenticated/tipos-de-quarto.$id.editar'
+import { Route as AuthenticatedReservasIdEditarRouteImport } from './routes/_authenticated/reservas.$id.editar'
 import { Route as AuthenticatedQuartosIdEditarRouteImport } from './routes/_authenticated/quartos.$id.editar'
 import { Route as AuthenticatedHospedesIdEditarRouteImport } from './routes/_authenticated/hospedes.$id.editar'
 
@@ -60,6 +63,12 @@ const AuthenticatedTiposDeQuartoIndexRoute =
     path: '/tipos-de-quarto/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReservasIndexRoute =
+  AuthenticatedReservasIndexRouteImport.update({
+    id: '/reservas/',
+    path: '/reservas/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedQuartosIndexRoute =
   AuthenticatedQuartosIndexRouteImport.update({
     id: '/quartos/',
@@ -78,6 +87,12 @@ const AuthenticatedTiposDeQuartoNovoRoute =
     path: '/tipos-de-quarto/novo',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReservasNovoRoute =
+  AuthenticatedReservasNovoRouteImport.update({
+    id: '/reservas/novo',
+    path: '/reservas/novo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedQuartosNovoRoute =
   AuthenticatedQuartosNovoRouteImport.update({
     id: '/quartos/novo',
@@ -94,6 +109,12 @@ const AuthenticatedTiposDeQuartoIdEditarRoute =
   AuthenticatedTiposDeQuartoIdEditarRouteImport.update({
     id: '/tipos-de-quarto/$id/editar',
     path: '/tipos-de-quarto/$id/editar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReservasIdEditarRoute =
+  AuthenticatedReservasIdEditarRouteImport.update({
+    id: '/reservas/$id/editar',
+    path: '/reservas/$id/editar',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedQuartosIdEditarRoute =
@@ -117,12 +138,15 @@ export interface FileRoutesByFullPath {
   '/invite/$token': typeof InviteTokenRoute
   '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
   '/quartos/novo': typeof AuthenticatedQuartosNovoRoute
+  '/reservas/novo': typeof AuthenticatedReservasNovoRoute
   '/tipos-de-quarto/novo': typeof AuthenticatedTiposDeQuartoNovoRoute
   '/hospedes/': typeof AuthenticatedHospedesIndexRoute
   '/quartos/': typeof AuthenticatedQuartosIndexRoute
+  '/reservas/': typeof AuthenticatedReservasIndexRoute
   '/tipos-de-quarto/': typeof AuthenticatedTiposDeQuartoIndexRoute
   '/hospedes/$id/editar': typeof AuthenticatedHospedesIdEditarRoute
   '/quartos/$id/editar': typeof AuthenticatedQuartosIdEditarRoute
+  '/reservas/$id/editar': typeof AuthenticatedReservasIdEditarRoute
   '/tipos-de-quarto/$id/editar': typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 export interface FileRoutesByTo {
@@ -133,12 +157,15 @@ export interface FileRoutesByTo {
   '/invite/$token': typeof InviteTokenRoute
   '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
   '/quartos/novo': typeof AuthenticatedQuartosNovoRoute
+  '/reservas/novo': typeof AuthenticatedReservasNovoRoute
   '/tipos-de-quarto/novo': typeof AuthenticatedTiposDeQuartoNovoRoute
   '/hospedes': typeof AuthenticatedHospedesIndexRoute
   '/quartos': typeof AuthenticatedQuartosIndexRoute
+  '/reservas': typeof AuthenticatedReservasIndexRoute
   '/tipos-de-quarto': typeof AuthenticatedTiposDeQuartoIndexRoute
   '/hospedes/$id/editar': typeof AuthenticatedHospedesIdEditarRoute
   '/quartos/$id/editar': typeof AuthenticatedQuartosIdEditarRoute
+  '/reservas/$id/editar': typeof AuthenticatedReservasIdEditarRoute
   '/tipos-de-quarto/$id/editar': typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 export interface FileRoutesById {
@@ -151,12 +178,15 @@ export interface FileRoutesById {
   '/invite/$token': typeof InviteTokenRoute
   '/_authenticated/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
   '/_authenticated/quartos/novo': typeof AuthenticatedQuartosNovoRoute
+  '/_authenticated/reservas/novo': typeof AuthenticatedReservasNovoRoute
   '/_authenticated/tipos-de-quarto/novo': typeof AuthenticatedTiposDeQuartoNovoRoute
   '/_authenticated/hospedes/': typeof AuthenticatedHospedesIndexRoute
   '/_authenticated/quartos/': typeof AuthenticatedQuartosIndexRoute
+  '/_authenticated/reservas/': typeof AuthenticatedReservasIndexRoute
   '/_authenticated/tipos-de-quarto/': typeof AuthenticatedTiposDeQuartoIndexRoute
   '/_authenticated/hospedes/$id/editar': typeof AuthenticatedHospedesIdEditarRoute
   '/_authenticated/quartos/$id/editar': typeof AuthenticatedQuartosIdEditarRoute
+  '/_authenticated/reservas/$id/editar': typeof AuthenticatedReservasIdEditarRoute
   '/_authenticated/tipos-de-quarto/$id/editar': typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 export interface FileRouteTypes {
@@ -169,12 +199,15 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/hospedes/novo'
     | '/quartos/novo'
+    | '/reservas/novo'
     | '/tipos-de-quarto/novo'
     | '/hospedes/'
     | '/quartos/'
+    | '/reservas/'
     | '/tipos-de-quarto/'
     | '/hospedes/$id/editar'
     | '/quartos/$id/editar'
+    | '/reservas/$id/editar'
     | '/tipos-de-quarto/$id/editar'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -185,12 +218,15 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/hospedes/novo'
     | '/quartos/novo'
+    | '/reservas/novo'
     | '/tipos-de-quarto/novo'
     | '/hospedes'
     | '/quartos'
+    | '/reservas'
     | '/tipos-de-quarto'
     | '/hospedes/$id/editar'
     | '/quartos/$id/editar'
+    | '/reservas/$id/editar'
     | '/tipos-de-quarto/$id/editar'
   id:
     | '__root__'
@@ -202,12 +238,15 @@ export interface FileRouteTypes {
     | '/invite/$token'
     | '/_authenticated/hospedes/novo'
     | '/_authenticated/quartos/novo'
+    | '/_authenticated/reservas/novo'
     | '/_authenticated/tipos-de-quarto/novo'
     | '/_authenticated/hospedes/'
     | '/_authenticated/quartos/'
+    | '/_authenticated/reservas/'
     | '/_authenticated/tipos-de-quarto/'
     | '/_authenticated/hospedes/$id/editar'
     | '/_authenticated/quartos/$id/editar'
+    | '/_authenticated/reservas/$id/editar'
     | '/_authenticated/tipos-de-quarto/$id/editar'
   fileRoutesById: FileRoutesById
 }
@@ -269,6 +308,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTiposDeQuartoIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reservas/': {
+      id: '/_authenticated/reservas/'
+      path: '/reservas'
+      fullPath: '/reservas/'
+      preLoaderRoute: typeof AuthenticatedReservasIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/quartos/': {
       id: '/_authenticated/quartos/'
       path: '/quartos'
@@ -290,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTiposDeQuartoNovoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reservas/novo': {
+      id: '/_authenticated/reservas/novo'
+      path: '/reservas/novo'
+      fullPath: '/reservas/novo'
+      preLoaderRoute: typeof AuthenticatedReservasNovoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/quartos/novo': {
       id: '/_authenticated/quartos/novo'
       path: '/quartos/novo'
@@ -309,6 +362,13 @@ declare module '@tanstack/react-router' {
       path: '/tipos-de-quarto/$id/editar'
       fullPath: '/tipos-de-quarto/$id/editar'
       preLoaderRoute: typeof AuthenticatedTiposDeQuartoIdEditarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reservas/$id/editar': {
+      id: '/_authenticated/reservas/$id/editar'
+      path: '/reservas/$id/editar'
+      fullPath: '/reservas/$id/editar'
+      preLoaderRoute: typeof AuthenticatedReservasIdEditarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/quartos/$id/editar': {
@@ -333,12 +393,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedEquipeRoute: typeof AuthenticatedEquipeRoute
   AuthenticatedHospedesNovoRoute: typeof AuthenticatedHospedesNovoRoute
   AuthenticatedQuartosNovoRoute: typeof AuthenticatedQuartosNovoRoute
+  AuthenticatedReservasNovoRoute: typeof AuthenticatedReservasNovoRoute
   AuthenticatedTiposDeQuartoNovoRoute: typeof AuthenticatedTiposDeQuartoNovoRoute
   AuthenticatedHospedesIndexRoute: typeof AuthenticatedHospedesIndexRoute
   AuthenticatedQuartosIndexRoute: typeof AuthenticatedQuartosIndexRoute
+  AuthenticatedReservasIndexRoute: typeof AuthenticatedReservasIndexRoute
   AuthenticatedTiposDeQuartoIndexRoute: typeof AuthenticatedTiposDeQuartoIndexRoute
   AuthenticatedHospedesIdEditarRoute: typeof AuthenticatedHospedesIdEditarRoute
   AuthenticatedQuartosIdEditarRoute: typeof AuthenticatedQuartosIdEditarRoute
+  AuthenticatedReservasIdEditarRoute: typeof AuthenticatedReservasIdEditarRoute
   AuthenticatedTiposDeQuartoIdEditarRoute: typeof AuthenticatedTiposDeQuartoIdEditarRoute
 }
 
@@ -347,12 +410,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEquipeRoute: AuthenticatedEquipeRoute,
   AuthenticatedHospedesNovoRoute: AuthenticatedHospedesNovoRoute,
   AuthenticatedQuartosNovoRoute: AuthenticatedQuartosNovoRoute,
+  AuthenticatedReservasNovoRoute: AuthenticatedReservasNovoRoute,
   AuthenticatedTiposDeQuartoNovoRoute: AuthenticatedTiposDeQuartoNovoRoute,
   AuthenticatedHospedesIndexRoute: AuthenticatedHospedesIndexRoute,
   AuthenticatedQuartosIndexRoute: AuthenticatedQuartosIndexRoute,
+  AuthenticatedReservasIndexRoute: AuthenticatedReservasIndexRoute,
   AuthenticatedTiposDeQuartoIndexRoute: AuthenticatedTiposDeQuartoIndexRoute,
   AuthenticatedHospedesIdEditarRoute: AuthenticatedHospedesIdEditarRoute,
   AuthenticatedQuartosIdEditarRoute: AuthenticatedQuartosIdEditarRoute,
+  AuthenticatedReservasIdEditarRoute: AuthenticatedReservasIdEditarRoute,
   AuthenticatedTiposDeQuartoIdEditarRoute:
     AuthenticatedTiposDeQuartoIdEditarRoute,
 }
@@ -369,13 +435,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

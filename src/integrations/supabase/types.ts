@@ -435,6 +435,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_reservation: { Args: { _id: string }; Returns: undefined }
+      checkin_reservation: { Args: { _id: string }; Returns: undefined }
+      checkout_reservation: { Args: { _id: string }; Returns: undefined }
       search_guests: {
         Args: { q: string }
         Returns: {
