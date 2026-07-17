@@ -34,7 +34,9 @@ function AuthenticatedLayout() {
             <Link to="/quartos" className="text-sm text-muted-foreground hover:text-foreground">Quartos</Link>
             <Link to="/tipos-de-quarto" className="text-sm text-muted-foreground hover:text-foreground">Tipos</Link>
             <Link to="/hospedes" className="text-sm text-muted-foreground hover:text-foreground">Hóspedes</Link>
+            <Link to="/reservas" className="text-sm text-muted-foreground hover:text-foreground">Reservas</Link>
             <Link to="/equipe" className="text-sm text-muted-foreground hover:text-foreground">Equipe</Link>
+
           </nav>
           <Button variant="ghost" size="sm" onClick={handleLogout}>Sair</Button>
         </div>
