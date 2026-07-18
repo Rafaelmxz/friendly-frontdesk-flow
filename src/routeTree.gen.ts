@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as AuthenticatedEquipeRouteImport } from './routes/_authenticated/equipe'
+import { Route as AuthenticatedCalendarioRouteImport } from './routes/_authenticated/calendario'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedTiposDeQuartoIndexRouteImport } from './routes/_authenticated/tipos-de-quarto.index'
 import { Route as AuthenticatedReservasIndexRouteImport } from './routes/_authenticated/reservas.index'
@@ -50,6 +51,11 @@ const InviteTokenRoute = InviteTokenRouteImport.update({
 const AuthenticatedEquipeRoute = AuthenticatedEquipeRouteImport.update({
   id: '/equipe',
   path: '/equipe',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCalendarioRoute = AuthenticatedCalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app': typeof AuthenticatedAppRoute
+  '/calendario': typeof AuthenticatedCalendarioRoute
   '/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
   '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app': typeof AuthenticatedAppRoute
+  '/calendario': typeof AuthenticatedCalendarioRoute
   '/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
   '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
+  '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
   '/_authenticated/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
   '/_authenticated/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/app'
+    | '/calendario'
     | '/equipe'
     | '/invite/$token'
     | '/hospedes/novo'
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/app'
+    | '/calendario'
     | '/equipe'
     | '/invite/$token'
     | '/hospedes/novo'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/app'
+    | '/_authenticated/calendario'
     | '/_authenticated/equipe'
     | '/invite/$token'
     | '/_authenticated/hospedes/novo'
@@ -292,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/equipe'
       fullPath: '/equipe'
       preLoaderRoute: typeof AuthenticatedEquipeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/calendario': {
+      id: '/_authenticated/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof AuthenticatedCalendarioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app': {
@@ -390,6 +409,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRoute
+  AuthenticatedCalendarioRoute: typeof AuthenticatedCalendarioRoute
   AuthenticatedEquipeRoute: typeof AuthenticatedEquipeRoute
   AuthenticatedHospedesNovoRoute: typeof AuthenticatedHospedesNovoRoute
   AuthenticatedQuartosNovoRoute: typeof AuthenticatedQuartosNovoRoute
@@ -407,6 +427,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRoute,
+  AuthenticatedCalendarioRoute: AuthenticatedCalendarioRoute,
   AuthenticatedEquipeRoute: AuthenticatedEquipeRoute,
   AuthenticatedHospedesNovoRoute: AuthenticatedHospedesNovoRoute,
   AuthenticatedQuartosNovoRoute: AuthenticatedQuartosNovoRoute,
