@@ -31,6 +31,7 @@ function AuthenticatedLayout() {
           <nav className="flex items-center gap-4 flex-wrap">
             <Link to="/app" className="font-semibold">PMS</Link>
             <Link to="/app" className="text-sm text-muted-foreground hover:text-foreground">Painel</Link>
+            <Link to="/calendario" className="text-sm text-muted-foreground hover:text-foreground">Calendário</Link>
             <Link to="/quartos" className="text-sm text-muted-foreground hover:text-foreground">Quartos</Link>
             <Link to="/tipos-de-quarto" className="text-sm text-muted-foreground hover:text-foreground">Tipos</Link>
             <Link to="/hospedes" className="text-sm text-muted-foreground hover:text-foreground">Hóspedes</Link>

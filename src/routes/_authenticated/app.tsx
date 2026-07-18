@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getCurrentUserProfile } from "@/lib/user.functions";
+import { getDashboardMetrics } from "@/lib/dashboard.functions";
 
 const profileQueryOptions = () =>
   queryOptions({
@@ -11,9 +12,18 @@ const profileQueryOptions = () =>
     queryFn: () => getCurrentUserProfile(),
   });
 
+const metricsQueryOptions = () =>
+  queryOptions({
+    queryKey: ["dashboardMetrics"],
+    queryFn: () => getDashboardMetrics(),
+  });
+
 export const Route = createFileRoute("/_authenticated/app")({
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(profileQueryOptions());
+    await Promise.all([
+      context.queryClient.ensureQueryData(profileQueryOptions()),
+      context.queryClient.ensureQueryData(metricsQueryOptions()),
+    ]);
   },
   component: AppHome,
   errorComponent: AppError,
@@ -26,28 +36,49 @@ function roleLabel(role: "admin" | "recepcionista"): string {
   return role;
 }
 
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
 function AppHome() {
-  const { data } = useSuspenseQuery(profileQueryOptions());
+  const { data: profile } = useSuspenseQuery(profileQueryOptions());
+  const { data: m } = useSuspenseQuery(metricsQueryOptions());
+
+  const cards = [
+    { label: "Quartos ocupados", value: String(m.rooms_ocupados) },
+    { label: "Quartos livres", value: String(m.rooms_disponiveis) },
+    { label: "Check-ins hoje", value: String(m.checkins_hoje) },
+    { label: "Check-outs hoje", value: String(m.checkouts_hoje) },
+    { label: "Receita do mês", value: brl.format(m.receita_mes) },
+  ];
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <CardTitle>
-              Bem-vindo, {data.fullName || "hóspede"} — {roleLabel(data.role)} em {data.hotelName}
-            </CardTitle>
-            <CardDescription>
-              {data.hotelName}
-            </CardDescription>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <CardTitle>
+                Bem-vindo, {profile.fullName || "hóspede"} — {roleLabel(profile.role)} em {profile.hotelName}
+              </CardTitle>
+              <CardDescription>{profile.hotelName}</CardDescription>
+            </div>
+            <Badge variant="secondary">{roleLabel(profile.role)}</Badge>
           </div>
-          <Badge variant="secondary">{roleLabel(data.role)}</Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">
-        Use o menu para gerenciar sua equipe. Reservas, quartos e pagamentos virão em seguida.
-      </CardContent>
-    </Card>
+        </CardHeader>
+      </Card>
+
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        {cards.map((c) => (
+          <Card key={c.label}>
+            <CardHeader className="pb-2">
+              <CardDescription>{c.label}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-semibold tabular-nums">{c.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 }
 

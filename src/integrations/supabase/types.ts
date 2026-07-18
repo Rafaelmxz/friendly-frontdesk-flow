@@ -438,6 +438,28 @@ export type Database = {
       cancel_reservation: { Args: { _id: string }; Returns: undefined }
       checkin_reservation: { Args: { _id: string }; Returns: undefined }
       checkout_reservation: { Args: { _id: string }; Returns: undefined }
+      dashboard_metrics: {
+        Args: never
+        Returns: {
+          checkins_hoje: number
+          checkouts_hoje: number
+          receita_mes: number
+          rooms_disponiveis: number
+          rooms_ocupados: number
+        }[]
+      }
+      reservations_calendar: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          check_in: string
+          check_out: string
+          guest_id: string
+          guest_name: string
+          id: string
+          room_id: string
+          status: Database["public"]["Enums"]["reservation_status"]
+        }[]
+      }
       search_guests: {
         Args: { q: string }
         Returns: {
