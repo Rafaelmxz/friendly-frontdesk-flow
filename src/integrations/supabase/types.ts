@@ -444,9 +444,39 @@ export type Database = {
           checkins_hoje: number
           checkouts_hoje: number
           receita_mes: number
+          receita_recebida_mes: number
           rooms_disponiveis: number
           rooms_ocupados: number
         }[]
+      }
+      register_payment: {
+        Args: {
+          _amount: number
+          _method: Database["public"]["Enums"]["payment_method"]
+          _notes: string
+          _paid_at: string
+          _reservation_id: string
+          _status: Database["public"]["Enums"]["payment_status"]
+        }
+        Returns: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          hotel_id: string
+          id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          notes: string | null
+          paid_at: string | null
+          reservation_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       reservations_calendar: {
         Args: { _from: string; _to: string }
@@ -481,6 +511,35 @@ export type Database = {
           to: "guests"
           isOneToOne: false
           isSetofReturn: true
+        }
+      }
+      update_payment: {
+        Args: {
+          _amount: number
+          _id: string
+          _method: Database["public"]["Enums"]["payment_method"]
+          _notes: string
+          _paid_at: string
+          _status: Database["public"]["Enums"]["payment_status"]
+        }
+        Returns: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          hotel_id: string
+          id: string
+          method: Database["public"]["Enums"]["payment_method"]
+          notes: string | null
+          paid_at: string | null
+          reservation_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payments"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
     }
