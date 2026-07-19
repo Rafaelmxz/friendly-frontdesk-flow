@@ -47,7 +47,8 @@ function AppHome() {
     { label: "Quartos livres", value: String(m.rooms_disponiveis) },
     { label: "Check-ins hoje", value: String(m.checkins_hoje) },
     { label: "Check-outs hoje", value: String(m.checkouts_hoje) },
-    { label: "Receita do mês", value: brl.format(m.receita_mes) },
+    { label: "Receita prevista (mês)", value: brl.format(m.receita_mes) },
+    { label: "Receita recebida (mês)", value: brl.format(m.receita_recebida_mes) },
   ];
 
   return (
@@ -66,7 +67,7 @@ function AppHome() {
         </CardHeader>
       </Card>
 
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         {cards.map((c) => (
           <Card key={c.label}>
             <CardHeader className="pb-2">

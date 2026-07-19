@@ -18,6 +18,7 @@ export const getDashboardMetrics = createServerFn({ method: "GET" })
       checkins_hoje: Number(row?.checkins_hoje ?? 0),
       checkouts_hoje: Number(row?.checkouts_hoje ?? 0),
       receita_mes: Number(row?.receita_mes ?? 0),
+      receita_recebida_mes: Number(row?.receita_recebida_mes ?? 0),
     };
   });
 
