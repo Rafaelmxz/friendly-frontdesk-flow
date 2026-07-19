@@ -103,7 +103,7 @@ export const createPayment = createServerFn({ method: "POST" })
       _amount: data.amount,
       _method: data.method,
       _status: data.status,
-      _paid_at: toIsoOrNull(data.paid_at),
+      _paid_at: toIsoOrNull(data.paid_at) ?? (undefined as unknown as string),
       _notes: data.notes ?? "",
     });
     if (error) throw new Error(error.message);
