@@ -47,7 +47,8 @@ function AppHome() {
     { label: "Quartos livres", value: String(m.rooms_disponiveis) },
     { label: "Check-ins hoje", value: String(m.checkins_hoje) },
     { label: "Check-outs hoje", value: String(m.checkouts_hoje) },
-    { label: "Receita do mês", value: brl.format(m.receita_mes) },
+    { label: "Receita prevista (mês)", value: brl.format(m.receita_mes) },
+    { label: "Receita recebida (mês)", value: brl.format(m.receita_recebida_mes) },
   ];
 
   return (
