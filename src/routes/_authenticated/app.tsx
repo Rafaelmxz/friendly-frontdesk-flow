@@ -67,7 +67,7 @@ function AppHome() {
         </CardHeader>
       </Card>
 
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         {cards.map((c) => (
           <Card key={c.label}>
             <CardHeader className="pb-2">
