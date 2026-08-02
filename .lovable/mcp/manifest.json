@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://fsgbxvhtudnuchpmfirl.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "hotel-harmony-hub",
+      "version": "0.1.0",
+      "title": "Hotel Harmony Hub"
+    },
+    "tools": [
+      {
+        "name": "hotel_dashboard",
+        "title": "Hotel dashboard",
+        "description": "Get today's key metrics for the signed-in user's hotel: occupied and free rooms, check-ins and check-outs today, and this month's expected and received revenue.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_rooms",
+        "title": "List rooms",
+        "description": "List rooms of the signed-in user's hotel with their number, floor, status and room type name. Optionally filter by room status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by room status.",
+              "type": "string",
+              "enum": [
+                "disponivel",
+                "ocupado",
+                "manutencao",
+                "limpeza",
+                "bloqueado"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_reservations",
+        "title": "List reservations",
+        "description": "List reservations of the signed-in user's hotel, with guest name and room number. Optionally filter by status and by a check-in date range (YYYY-MM-DD).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by reservation status.",
+              "type": "string",
+              "enum": [
+                "pendente",
+                "confirmada",
+                "checkin",
+                "checkout",
+                "cancelada",
+                "no_show"
+              ]
+            },
+            "from": {
+              "description": "Only reservations with check-in on or after this date (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "to": {
+              "description": "Only reservations with check-in on or before this date (YYYY-MM-DD).",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Maximum rows to return (default 50, max 200).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_guests",
+        "title": "Search guests",
+        "description": "Search guests of the signed-in user's hotel by name, document number (CPF) or the room number of an active reservation.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Name, document number or room number to search for."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_reservation",
+        "title": "Create reservation",
+        "description": "Create a reservation for an existing guest and room in the signed-in user's hotel. Dates use YYYY-MM-DD and check-out must be after check-in.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "guest_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "ID of an existing guest."
+            },
+            "room_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "ID of an existing room."
+            },
+            "check_in": {
+              "type": "string",
+              "description": "Check-in date (YYYY-MM-DD)."
+            },
+            "check_out": {
+              "type": "string",
+              "description": "Check-out date (YYYY-MM-DD)."
+            },
+            "total_amount": {
+              "type": "number",
+              "description": "Total amount of the reservation, in BRL."
+            },
+            "adults": {
+              "description": "Number of adults (default 1).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "children": {
+              "description": "Number of children (default 0).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "notes": {
+              "description": "Optional internal notes.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "guest_id",
+            "room_id",
+            "check_in",
+            "check_out",
+            "total_amount"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
