@@ -28,6 +28,7 @@ import { Route as AuthenticatedReservasNovoRouteImport } from './routes/_authent
 import { Route as AuthenticatedQuartosNovoRouteImport } from './routes/_authenticated/quartos.novo'
 import { Route as AuthenticatedHospedesNovoRouteImport } from './routes/_authenticated/hospedes.novo'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedTiposDeQuartoIdEditarRouteImport } from './routes/_authenticated/tipos-de-quarto.$id.editar'
 import { Route as AuthenticatedReservasIdEditarRouteImport } from './routes/_authenticated/reservas.$id.editar'
 import { Route as AuthenticatedQuartosIdEditarRouteImport } from './routes/_authenticated/quartos.$id.editar'
@@ -138,6 +139,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedTiposDeQuartoIdEditarRoute =
   AuthenticatedTiposDeQuartoIdEditarRouteImport.update({
     id: '/tipos-de-quarto/$id/editar',
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
   '/quartos/novo': typeof AuthenticatedQuartosNovoRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/calendario': typeof AuthenticatedCalendarioRoute
   '/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
   '/quartos/novo': typeof AuthenticatedQuartosNovoRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/_authenticated/calendario': typeof AuthenticatedCalendarioRoute
   '/_authenticated/equipe': typeof AuthenticatedEquipeRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/hospedes/novo': typeof AuthenticatedHospedesNovoRoute
   '/_authenticated/quartos/novo': typeof AuthenticatedQuartosNovoRoute
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/equipe'
     | '/invite/$token'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/hospedes/novo'
     | '/quartos/novo'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/equipe'
     | '/invite/$token'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/hospedes/novo'
     | '/quartos/novo'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/_authenticated/calendario'
     | '/_authenticated/equipe'
     | '/invite/$token'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/hospedes/novo'
     | '/_authenticated/quartos/novo'
@@ -321,6 +333,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   InviteTokenRoute: typeof InviteTokenRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
@@ -459,6 +472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/tipos-de-quarto/$id/editar': {
       id: '/_authenticated/tipos-de-quarto/$id/editar'
       path: '/tipos-de-quarto/$id/editar'
@@ -539,6 +559,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   InviteTokenRoute: InviteTokenRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
