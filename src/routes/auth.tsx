@@ -15,7 +15,14 @@ import { signupHotelOwner } from "@/lib/auth.functions";
 
 const searchSchema = z.object({
   tab: z.enum(["login", "signup"]).optional().default("login"),
+  next: z.string().optional(),
 });
+
+/** Only same-origin relative paths are safe redirect targets. */
+function safeNext(next: string | undefined): string | null {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
