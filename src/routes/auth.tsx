@@ -15,7 +15,14 @@ import { signupHotelOwner } from "@/lib/auth.functions";
 
 const searchSchema = z.object({
   tab: z.enum(["login", "signup"]).optional().default("login"),
+  next: z.string().optional(),
 });
+
+/** Only same-origin relative paths are safe redirect targets. */
+function safeNext(next: string | undefined): string | null {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
@@ -26,9 +33,10 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { tab } = Route.useSearch();
+  const { tab, next } = Route.useSearch();
   const navigate = useNavigate();
   const signup = useServerFn(signupHotelOwner);
+  const redirectTarget = safeNext(next);
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -39,6 +47,14 @@ function AuthPage() {
   const [suEmail, setSuEmail] = useState("");
   const [suPassword, setSuPassword] = useState("");
   const [suLoading, setSuLoading] = useState(false);
+
+  function goAfterAuth() {
+    if (redirectTarget) {
+      window.location.href = redirectTarget;
+      return;
+    }
+    navigate({ to: "/app" });
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -52,7 +68,7 @@ function AuthPage() {
       toast.error("Credenciais inválidas.");
       return;
     }
-    navigate({ to: "/app" });
+    goAfterAuth();
   }
 
   async function handleSignup(e: React.FormEvent) {
@@ -80,7 +96,7 @@ function AuthPage() {
         navigate({ to: "/auth", search: { tab: "login" } });
         return;
       }
-      navigate({ to: "/app" });
+      goAfterAuth();
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível concluir o cadastro.");
