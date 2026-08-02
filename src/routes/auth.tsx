@@ -96,7 +96,7 @@ function AuthPage() {
         navigate({ to: "/auth", search: { tab: "login" } });
         return;
       }
-      navigate({ to: "/app" });
+      goAfterAuth();
     } catch (err) {
       console.error(err);
       toast.error("Não foi possível concluir o cadastro.");
