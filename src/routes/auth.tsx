@@ -33,9 +33,10 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { tab } = Route.useSearch();
+  const { tab, next } = Route.useSearch();
   const navigate = useNavigate();
   const signup = useServerFn(signupHotelOwner);
+  const redirectTarget = safeNext(next);
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -46,6 +47,14 @@ function AuthPage() {
   const [suEmail, setSuEmail] = useState("");
   const [suPassword, setSuPassword] = useState("");
   const [suLoading, setSuLoading] = useState(false);
+
+  function goAfterAuth() {
+    if (redirectTarget) {
+      window.location.href = redirectTarget;
+      return;
+    }
+    navigate({ to: "/app" });
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +68,7 @@ function AuthPage() {
       toast.error("Credenciais inválidas.");
       return;
     }
-    navigate({ to: "/app" });
+    goAfterAuth();
   }
 
   async function handleSignup(e: React.FormEvent) {
