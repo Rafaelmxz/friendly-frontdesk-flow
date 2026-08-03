@@ -478,6 +478,28 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      remove_hotel_member: { Args: { _user_id: string }; Returns: undefined }
+      renew_hotel_invite: {
+        Args: { _id: string; _token: string }
+        Returns: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          hotel_id: string
+          id: string
+          invited_by: string
+          role: Database["public"]["Enums"]["app_role"]
+          token: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "hotel_invites"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       reservations_calendar: {
         Args: { _from: string; _to: string }
         Returns: {
