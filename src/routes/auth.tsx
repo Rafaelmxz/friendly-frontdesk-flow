@@ -121,6 +121,14 @@ function AuthPage() {
           <CardDescription>Acesse sua conta ou crie um novo hotel.</CardDescription>
         </CardHeader>
         <CardContent>
+          {reason === "unlinked" && (
+            <div
+              role="alert"
+              className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              {UNLINKED_MESSAGE}
+            </div>
+          )}
           <Tabs defaultValue={tab}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Entrar</TabsTrigger>
