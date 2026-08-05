@@ -39,8 +39,14 @@ function roleLabel(role: "admin" | "recepcionista"): string {
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 function AppHome() {
-  const { data: profile } = useSuspenseQuery(profileQueryOptions());
+  const { data: profileData } = useSuspenseQuery(profileQueryOptions());
   const { data: m } = useSuspenseQuery(metricsQueryOptions());
+
+  if (profileData.unlinked) {
+    throw new Error("Você não tem mais acesso a este hotel. Fale com um administrador.");
+  }
+  const profile = profileData;
+
 
   const cards = [
     { label: "Quartos ocupados", value: String(m.rooms_ocupados) },
