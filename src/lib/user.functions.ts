@@ -12,9 +12,14 @@ export const getCurrentUserProfile = createServerFn({ method: "GET" })
       .eq("id", userId)
       .maybeSingle();
 
-    if (profileError || !profile) {
+    if (profileError) {
       console.error("[getCurrentUserProfile] profile lookup failed", profileError);
       throw new Error("Não foi possível carregar seu perfil.");
+    }
+
+    // Sem perfil = usuário desvinculado do hotel (ou nunca vinculado).
+    if (!profile) {
+      return { unlinked: true as const };
     }
 
     const [{ data: hotel, error: hotelError }, { data: roleData, error: roleError }] = await Promise.all([
