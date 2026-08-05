@@ -16,7 +16,10 @@ import { signupHotelOwner } from "@/lib/auth.functions";
 const searchSchema = z.object({
   tab: z.enum(["login", "signup"]).optional().default("login"),
   next: z.string().optional(),
+  reason: z.enum(["unlinked"]).optional(),
 });
+
+const UNLINKED_MESSAGE = "Você não tem mais acesso a este hotel. Fale com um administrador.";
 
 /** Only same-origin relative paths are safe redirect targets. */
 function safeNext(next: string | undefined): string | null {
