@@ -36,10 +36,15 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { tab, next } = Route.useSearch();
+  const { tab, next, reason } = Route.useSearch();
   const navigate = useNavigate();
   const signup = useServerFn(signupHotelOwner);
   const redirectTarget = safeNext(next);
+
+  useEffect(() => {
+    if (reason === "unlinked") toast.error(UNLINKED_MESSAGE);
+  }, [reason]);
+
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
