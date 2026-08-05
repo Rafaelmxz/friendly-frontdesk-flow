@@ -1,16 +1,32 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { getCurrentUserProfile } from "@/lib/user.functions";
+import { currentProfileQueryOptions } from "@/hooks/useCurrentRole";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: async ({ context }) => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
+
+    // Bloqueia usuários cuja sessão continua válida mas que perderam o vínculo com o hotel.
+    const profile = await context.queryClient.ensureQueryData({
+      ...currentProfileQueryOptions(),
+      queryFn: () => getCurrentUserProfile(),
+    });
+
+    if (profile.unlinked) {
+      context.queryClient.clear();
+      await supabase.auth.signOut();
+      throw redirect({ to: "/auth", search: { reason: "unlinked" } });
+    }
+
     return { user: data.user };
   },
   component: AuthenticatedLayout,
 });
+
 
 function AuthenticatedLayout() {
   const navigate = useNavigate();

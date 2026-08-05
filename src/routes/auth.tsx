@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,10 @@ import { signupHotelOwner } from "@/lib/auth.functions";
 const searchSchema = z.object({
   tab: z.enum(["login", "signup"]).optional().default("login"),
   next: z.string().optional(),
+  reason: z.enum(["unlinked"]).optional(),
 });
+
+const UNLINKED_MESSAGE = "Você não tem mais acesso a este hotel. Fale com um administrador.";
 
 /** Only same-origin relative paths are safe redirect targets. */
 function safeNext(next: string | undefined): string | null {
@@ -33,10 +36,15 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { tab, next } = Route.useSearch();
+  const { tab, next, reason } = Route.useSearch();
   const navigate = useNavigate();
   const signup = useServerFn(signupHotelOwner);
   const redirectTarget = safeNext(next);
+
+  useEffect(() => {
+    if (reason === "unlinked") toast.error(UNLINKED_MESSAGE);
+  }, [reason]);
+
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -113,6 +121,14 @@ function AuthPage() {
           <CardDescription>Acesse sua conta ou crie um novo hotel.</CardDescription>
         </CardHeader>
         <CardContent>
+          {reason === "unlinked" && (
+            <div
+              role="alert"
+              className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              {UNLINKED_MESSAGE}
+            </div>
+          )}
           <Tabs defaultValue={tab}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Entrar</TabsTrigger>
