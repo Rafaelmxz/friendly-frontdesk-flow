@@ -148,12 +148,13 @@ function CalendarPage() {
 
   const setView = (v: ViewMode) => {
     setSelectedDay(null);
-    navigate({ search: (prev) => ({ ...prev, view: v, start: toISO(ref) }) });
+    navigate({ search: { view: v, start: toISO(ref) } });
   };
   const gotoDate = (d: Date) => {
     setSelectedDay(null);
-    navigate({ search: (prev) => ({ ...prev, start: toISO(d) }) });
+    navigate({ search: { view, start: toISO(d) } });
   };
+
 
   const monthRef = new Date(ref.getFullYear(), ref.getMonth(), 1);
   const periodLabel =
