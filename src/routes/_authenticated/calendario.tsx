@@ -140,6 +140,7 @@ function CalendarPage() {
   const { data: reservations } = useSuspenseQuery(calendarQuery(from, to));
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedReservation, setSelectedReservation] = useState<string | null>(null);
 
   const roomLabel = (id: string) => {
     const r = rooms.find((x) => x.id === id);
