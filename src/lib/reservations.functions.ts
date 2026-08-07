@@ -169,3 +169,50 @@ export const cancelReservation = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Dados completos de uma reserva para o hover card / drawer do calendário. */
+export const getReservationCard = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await (context.supabase as SB)
+      .from("reservations")
+      .select(
+        "id, guest_id, room_id, check_in, check_out, adults, children, total_amount, status, notes, guests(full_name, phone, email), rooms(number, room_types(name))",
+      )
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("Reserva não encontrada.");
+    const r = row as unknown as {
+      id: string;
+      guest_id: string;
+      room_id: string;
+      check_in: string;
+      check_out: string;
+      adults: number;
+      children: number;
+      total_amount: number | string;
+      status: string;
+      notes: string | null;
+      guests: { full_name: string; phone: string | null; email: string | null } | null;
+      rooms: { number: string; room_types: { name: string } | null } | null;
+    };
+    return {
+      id: r.id,
+      guest_id: r.guest_id,
+      room_id: r.room_id,
+      check_in: r.check_in,
+      check_out: r.check_out,
+      adults: r.adults,
+      children: r.children,
+      total_amount: Number(r.total_amount),
+      status: r.status,
+      notes: r.notes,
+      guest_name: r.guests?.full_name ?? "",
+      guest_phone: r.guests?.phone ?? null,
+      guest_email: r.guests?.email ?? null,
+      room_number: r.rooms?.number ?? "",
+      room_type_name: r.rooms?.room_types?.name ?? "",
+    };
+  });
