@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { listRooms } from "@/lib/rooms.functions";
 import { getReservationsCalendar } from "@/lib/dashboard.functions";
+import { TimelineGrid, type TimelineReservation } from "@/components/calendar/TimelineGrid";
+import { ReservationDrawer } from "@/components/calendar/ReservationDrawer";
+import { STATUS_META } from "@/components/calendar/reservation-card";
 
 const roomsQuery = () => queryOptions({ queryKey: ["rooms"], queryFn: () => listRooms() });
 const calendarQuery = (from: string, to: string) =>
