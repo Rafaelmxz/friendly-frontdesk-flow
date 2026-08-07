@@ -105,6 +105,16 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --status-confirmada: oklch(0.9 0.05 245);
+  --status-confirmada-foreground: oklch(0.38 0.12 250);
+  --status-checkin: oklch(0.9 0.06 155);
+  --status-checkin-foreground: oklch(0.38 0.11 155);
+  --status-pendente: oklch(0.93 0.08 95);
+  --status-pendente-foreground: oklch(0.42 0.11 75);
+  --status-cancelada: oklch(0.9 0.005 260);
+  --status-cancelada-foreground: oklch(0.45 0.02 260);
+  --weekend: oklch(0.972 0.006 250);
+  --today-column: oklch(0.955 0.03 250);
 }
 
 .dark {
@@ -140,6 +150,16 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --status-confirmada: oklch(0.42 0.09 250);
+  --status-confirmada-foreground: oklch(0.93 0.03 250);
+  --status-checkin: oklch(0.42 0.09 158);
+  --status-checkin-foreground: oklch(0.94 0.04 158);
+  --status-pendente: oklch(0.45 0.09 85);
+  --status-pendente-foreground: oklch(0.95 0.04 95);
+  --status-cancelada: oklch(0.36 0.01 260);
+  --status-cancelada-foreground: oklch(0.88 0.01 260);
+  --weekend: oklch(0.18 0.03 264);
+  --today-column: oklch(0.24 0.045 264);
 }
 
 @layer base {
