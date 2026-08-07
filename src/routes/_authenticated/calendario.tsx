@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { listRooms } from "@/lib/rooms.functions";
 import { getReservationsCalendar } from "@/lib/dashboard.functions";
+import { TimelineGrid, type TimelineReservation } from "@/components/calendar/TimelineGrid";
+import { ReservationDrawer } from "@/components/calendar/ReservationDrawer";
+import { STATUS_META } from "@/components/calendar/reservation-card";
 
 const roomsQuery = () => queryOptions({ queryKey: ["rooms"], queryFn: () => listRooms() });
 const calendarQuery = (from: string, to: string) =>
@@ -137,6 +140,7 @@ function CalendarPage() {
   const { data: reservations } = useSuspenseQuery(calendarQuery(from, to));
 
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedReservation, setSelectedReservation] = useState<string | null>(null);
 
   const roomLabel = (id: string) => {
     const r = rooms.find((x) => x.id === id);
@@ -310,85 +314,39 @@ function CalendarPage() {
         <>
           <Card>
             <CardContent className="p-0 overflow-x-auto">
-              {rooms.length === 0 ? (
-                <div className="p-8 text-center text-muted-foreground">Nenhum quarto cadastrado.</div>
-              ) : (
-                <div className="min-w-[900px]">
-                  <div
-                    className="grid border-b bg-muted/40 text-xs font-medium"
-                    style={{ gridTemplateColumns: `140px repeat(${DAYS}, minmax(0, 1fr))` }}
-                  >
-                    <div className="p-2 border-r">Quarto</div>
-                    {days.map((d) => (
-                      <div key={d.toISOString()} className="p-2 text-center border-r last:border-r-0">
-                        {dayFmt.format(d)}
-                      </div>
-                    ))}
-                  </div>
-
-                  {rooms.map((room) => {
-                    const roomRes = reservations.filter((r: Reservation) => r.room_id === room.id);
-                    return (
-                      <div
-                        key={room.id}
-                        className="grid border-b last:border-b-0 relative"
-                        style={{ gridTemplateColumns: `140px repeat(${DAYS}, minmax(0, 1fr))`, minHeight: 56 }}
-                      >
-                        <div className="p-2 border-r text-sm flex flex-col justify-center">
-                          <div className="font-medium">Quarto {room.number}</div>
-                          <div className="text-xs text-muted-foreground">{room.room_type_name}</div>
-                        </div>
-                        {days.map((d) => (
-                          <div key={d.toISOString()} className="border-r last:border-r-0" />
-                        ))}
-                        <div className="absolute inset-y-2 pointer-events-none" style={{ left: 140, right: 0 }}>
-                          <div
-                            className="relative h-full grid"
-                            style={{ gridTemplateColumns: `repeat(${DAYS}, minmax(0, 1fr))` }}
-                          >
-                            {roomRes.map((r: Reservation) => {
-                              const ci = parseISO(r.check_in);
-                              const co = parseISO(r.check_out);
-                              const startCol = Math.max(0, diffDays(ci, start));
-                              const endCol = Math.min(DAYS, diffDays(co, start));
-                              if (endCol <= startCol) return null;
-                              return (
-                                <Link
-                                  key={r.id}
-                                  to="/reservas/$id/editar"
-                                  params={{ id: r.id }}
-                                  className={`pointer-events-auto rounded-md px-2 py-1 text-xs text-primary-foreground truncate self-center ${
-                                    r.status === "checkin"
-                                      ? "bg-emerald-500/80 hover:bg-emerald-500"
-                                      : "bg-primary/80 hover:bg-primary"
-                                  }`}
-                                  style={{ gridColumn: `${startCol + 1} / ${endCol + 1}`, marginInline: 2 }}
-                                  title={`${r.guest_name} — ${r.check_in} a ${r.check_out}`}
-                                >
-                                  {r.guest_name}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <TimelineGrid
+                rooms={rooms.map((r) => ({
+                  id: r.id,
+                  number: r.number,
+                  status: r.status,
+                  room_type_name: r.room_type_name,
+                }))}
+                reservations={reservations as TimelineReservation[]}
+                days={days}
+                start={start}
+                todayISO={todayISO}
+                toISO={toISO}
+                parseISO={parseISO}
+                diffDays={diffDays}
+                dayFmt={dayFmt}
+                onSelect={setSelectedReservation}
+              />
             </CardContent>
           </Card>
 
-          <div className="flex gap-4 text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <span className="inline-block h-3 w-3 rounded bg-primary/80" /> Confirmada
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="inline-block h-3 w-3 rounded bg-emerald-500/80" /> Em check-in
-            </div>
+          <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+            {(["pendente", "confirmada", "checkin", "cancelada"] as const).map((s) => (
+              <div key={s} className="flex items-center gap-2">
+                <span className={`inline-block h-3 w-3 rounded ${STATUS_META[s].dot}`} />
+                {STATUS_META[s].label}
+              </div>
+            ))}
           </div>
         </>
       )}
+
+      <ReservationDrawer id={selectedReservation} onClose={() => setSelectedReservation(null)} />
+
     </div>
   );
 }
