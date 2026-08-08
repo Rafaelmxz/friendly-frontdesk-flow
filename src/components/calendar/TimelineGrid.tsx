@@ -1,6 +1,9 @@
+import { useCallback, useRef } from "react";
 import { Sparkles, Wrench, Ban } from "lucide-react";
 import { ReservationHoverCard } from "@/components/calendar/ReservationHoverCard";
 import { STATUS_META } from "@/components/calendar/reservation-card";
+import { useDragPan } from "@/hooks/useDragPan";
+
 
 export type TimelineRoom = {
   id: string;
@@ -38,6 +41,7 @@ interface Props {
   diffDays: (a: Date, b: Date) => number;
   dayFmt: Intl.DateTimeFormat;
   onSelect: (id: string) => void;
+  onPanDays?: (days: number) => void;
 }
 
 export function TimelineGrid({
@@ -51,9 +55,20 @@ export function TimelineGrid({
   diffDays,
   dayFmt,
   onSelect,
+  onPanDays,
 }: Props) {
   const cols = days.length;
   const template = `${SIDEBAR}px repeat(${cols}, minmax(0, 1fr))`;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const colWidth = useCallback(() => {
+    const w = containerRef.current?.clientWidth ?? 0;
+    return Math.max(1, (w - SIDEBAR) / cols);
+  }, [cols]);
+  const { dragging, dx, handlers } = useDragPan({
+    colWidth,
+    onPanDays: (n) => onPanDays?.(n),
+  });
 
   const dayBg = (d: Date) => {
     const iso = toISO(d);
@@ -67,7 +82,18 @@ export function TimelineGrid({
   }
 
   return (
-    <div className="min-w-[880px]">
+    <div
+      ref={containerRef}
+      {...(onPanDays ? handlers : {})}
+      className={`min-w-[880px] select-none ${
+        onPanDays ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
+      }`}
+      style={{
+        touchAction: "pan-y",
+        transform: dragging ? `translateX(${dx}px)` : undefined,
+      }}
+    >
+
       <div className="grid border-b bg-muted/40 text-xs font-medium" style={{ gridTemplateColumns: template }}>
         <div className="border-r p-2">Quarto</div>
         {days.map((d) => {
@@ -128,6 +154,7 @@ export function TimelineGrid({
                     >
                       <button
                         type="button"
+                        data-no-pan
                         onClick={() => onSelect(r.id)}
                         className={`pointer-events-auto flex h-full items-center gap-1 self-center overflow-hidden rounded border px-1.5 text-[11px] leading-none transition-opacity hover:opacity-85 ${meta.bar}`}
                         style={{ gridColumn: `${startCol + 1} / ${endCol + 1}`, marginInline: 2 }}
