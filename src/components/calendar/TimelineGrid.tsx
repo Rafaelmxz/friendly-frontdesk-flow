@@ -1,6 +1,9 @@
+import { useCallback, useRef } from "react";
 import { Sparkles, Wrench, Ban } from "lucide-react";
 import { ReservationHoverCard } from "@/components/calendar/ReservationHoverCard";
 import { STATUS_META } from "@/components/calendar/reservation-card";
+import { useDragPan } from "@/hooks/useDragPan";
+
 
 export type TimelineRoom = {
   id: string;
