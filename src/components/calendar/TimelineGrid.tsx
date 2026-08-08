@@ -154,6 +154,7 @@ export function TimelineGrid({
                     >
                       <button
                         type="button"
+                        data-no-pan
                         onClick={() => onSelect(r.id)}
                         className={`pointer-events-auto flex h-full items-center gap-1 self-center overflow-hidden rounded border px-1.5 text-[11px] leading-none transition-opacity hover:opacity-85 ${meta.bar}`}
                         style={{ gridColumn: `${startCol + 1} / ${endCol + 1}`, marginInline: 2 }}
