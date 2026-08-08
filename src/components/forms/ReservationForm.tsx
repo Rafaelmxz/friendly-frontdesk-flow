@@ -22,7 +22,7 @@ interface Props {
   mode: "create" | "edit";
   id?: string;
   guests: Array<{ id: string; full_name: string }>;
-  rooms: Array<{ id: string; number: string; room_type_name?: string }>;
+  rooms: Array<{ id: string; number: string; room_type_name?: string; base_price?: number | null }>;
   initial?: {
     guest_id: string;
     room_id: string;
