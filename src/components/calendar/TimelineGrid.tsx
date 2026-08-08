@@ -55,9 +55,20 @@ export function TimelineGrid({
   diffDays,
   dayFmt,
   onSelect,
+  onPanDays,
 }: Props) {
   const cols = days.length;
   const template = `${SIDEBAR}px repeat(${cols}, minmax(0, 1fr))`;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const colWidth = useCallback(() => {
+    const w = containerRef.current?.clientWidth ?? 0;
+    return Math.max(1, (w - SIDEBAR) / cols);
+  }, [cols]);
+  const { dragging, dx, handlers } = useDragPan({
+    colWidth,
+    onPanDays: (n) => onPanDays?.(n),
+  });
 
   const dayBg = (d: Date) => {
     const iso = toISO(d);
@@ -71,7 +82,18 @@ export function TimelineGrid({
   }
 
   return (
-    <div className="min-w-[880px]">
+    <div
+      ref={containerRef}
+      {...(onPanDays ? handlers : {})}
+      className={`min-w-[880px] select-none ${
+        onPanDays ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
+      }`}
+      style={{
+        touchAction: "pan-y",
+        transform: dragging ? `translateX(${dx}px)` : undefined,
+      }}
+    >
+
       <div className="grid border-b bg-muted/40 text-xs font-medium" style={{ gridTemplateColumns: template }}>
         <div className="border-r p-2">Quarto</div>
         {days.map((d) => {
