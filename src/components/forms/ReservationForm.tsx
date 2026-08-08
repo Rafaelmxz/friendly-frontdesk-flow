@@ -56,6 +56,26 @@ export function ReservationForm({ mode, id, guests, rooms, initial }: Props) {
   );
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [totalTouched, setTotalTouched] = useState(mode === "edit");
+
+  const suggestion = useMemo(() => {
+    const room = rooms.find((r) => r.id === roomId);
+    const price = room?.base_price;
+    if (!price || !checkIn || !checkOut) return null;
+    const ms = new Date(`${checkOut}T00:00:00`).getTime() - new Date(`${checkIn}T00:00:00`).getTime();
+    const nights = Math.round(ms / 86400000);
+    if (!Number.isFinite(nights) || nights <= 0) return null;
+    return { nights, price, total: Number((price * nights).toFixed(2)) };
+  }, [rooms, roomId, checkIn, checkOut]);
+
+  useEffect(() => {
+    if (totalTouched || !suggestion) return;
+    setTotal(String(suggestion.total));
+  }, [suggestion, totalTouched]);
+
+  const showRecalc =
+    !!suggestion && totalTouched && Number(total) !== suggestion.total;
+
 
   const mutation = useMutation<unknown, Error, unknown>({
     mutationFn: async (input: unknown) => {
