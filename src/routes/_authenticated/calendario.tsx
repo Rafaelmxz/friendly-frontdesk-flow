@@ -330,6 +330,7 @@ function CalendarPage() {
                 diffDays={diffDays}
                 dayFmt={dayFmt}
                 onSelect={setSelectedReservation}
+                onPanDays={(n) => gotoDate(addDays(start, n))}
               />
             </CardContent>
           </Card>
