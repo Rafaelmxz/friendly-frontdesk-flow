@@ -152,9 +152,37 @@ export function ReservationForm({ mode, id, guests, rooms, initial }: Props) {
           <Input id="children" type="number" min={0} value={children} onChange={(e) => setChildren(e.target.value)} />
         </FormField>
         <FormField id="total_amount" label="Total (R$)" required error={errors.total_amount}>
-          <Input id="total_amount" type="number" step="0.01" min={0} value={total} onChange={(e) => setTotal(e.target.value)} />
+          <Input
+            id="total_amount"
+            type="number"
+            step="0.01"
+            min={0}
+            value={total}
+            onChange={(e) => {
+              setTotalTouched(true);
+              setTotal(e.target.value);
+            }}
+          />
         </FormField>
       </div>
+      {showRecalc && suggestion && (
+        <p className="text-xs text-muted-foreground flex items-center gap-2 -mt-2">
+          <span>
+            Sugerido: {suggestion.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} (
+            {suggestion.nights} {suggestion.nights === 1 ? "noite" : "noites"} ×{" "}
+            {suggestion.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })})
+          </span>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={() => setTotal(String(suggestion.total))}
+          >
+            Recalcular
+          </Button>
+        </p>
+      )}
       <FormField id="status" label="Status inicial" required error={errors.status}>
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger id="status"><SelectValue /></SelectTrigger>
