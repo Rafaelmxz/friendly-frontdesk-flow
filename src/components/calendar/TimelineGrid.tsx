@@ -38,6 +38,7 @@ interface Props {
   diffDays: (a: Date, b: Date) => number;
   dayFmt: Intl.DateTimeFormat;
   onSelect: (id: string) => void;
+  onPanDays?: (days: number) => void;
 }
 
 export function TimelineGrid({
