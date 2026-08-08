@@ -22,18 +22,22 @@ export const listRooms = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await (context.supabase as SB)
       .from("rooms")
-      .select("id, number, floor, status, notes, room_type_id, room_types(name)")
+      .select("id, number, floor, status, notes, room_type_id, room_types(name, base_price)")
       .order("number");
     if (error) throw new Error(error.message);
-    return (data ?? []).map((r) => ({
-      id: r.id,
-      number: r.number,
-      floor: r.floor,
-      status: r.status,
-      notes: r.notes,
-      room_type_id: r.room_type_id,
-      room_type_name: (r as unknown as { room_types: { name: string } | null }).room_types?.name ?? "",
-    }));
+    return (data ?? []).map((r) => {
+      const rt = (r as unknown as { room_types: { name: string; base_price: number | string } | null }).room_types;
+      return {
+        id: r.id,
+        number: r.number,
+        floor: r.floor,
+        status: r.status,
+        notes: r.notes,
+        room_type_id: r.room_type_id,
+        room_type_name: rt?.name ?? "",
+        base_price: rt ? Number(rt.base_price) : null,
+      };
+    });
   });
 
 export const getRoom = createServerFn({ method: "GET" })
