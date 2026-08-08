@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -22,7 +22,7 @@ interface Props {
   mode: "create" | "edit";
   id?: string;
   guests: Array<{ id: string; full_name: string }>;
-  rooms: Array<{ id: string; number: string; room_type_name?: string }>;
+  rooms: Array<{ id: string; number: string; room_type_name?: string; base_price?: number | null }>;
   initial?: {
     guest_id: string;
     room_id: string;
@@ -56,6 +56,26 @@ export function ReservationForm({ mode, id, guests, rooms, initial }: Props) {
   );
   const [notes, setNotes] = useState(initial?.notes ?? "");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [totalTouched, setTotalTouched] = useState(mode === "edit");
+
+  const suggestion = useMemo(() => {
+    const room = rooms.find((r) => r.id === roomId);
+    const price = room?.base_price;
+    if (!price || !checkIn || !checkOut) return null;
+    const ms = new Date(`${checkOut}T00:00:00`).getTime() - new Date(`${checkIn}T00:00:00`).getTime();
+    const nights = Math.round(ms / 86400000);
+    if (!Number.isFinite(nights) || nights <= 0) return null;
+    return { nights, price, total: Number((price * nights).toFixed(2)) };
+  }, [rooms, roomId, checkIn, checkOut]);
+
+  useEffect(() => {
+    if (totalTouched || !suggestion) return;
+    setTotal(String(suggestion.total));
+  }, [suggestion, totalTouched]);
+
+  const showRecalc =
+    !!suggestion && totalTouched && Number(total) !== suggestion.total;
+
 
   const mutation = useMutation<unknown, Error, unknown>({
     mutationFn: async (input: unknown) => {
@@ -132,9 +152,37 @@ export function ReservationForm({ mode, id, guests, rooms, initial }: Props) {
           <Input id="children" type="number" min={0} value={children} onChange={(e) => setChildren(e.target.value)} />
         </FormField>
         <FormField id="total_amount" label="Total (R$)" required error={errors.total_amount}>
-          <Input id="total_amount" type="number" step="0.01" min={0} value={total} onChange={(e) => setTotal(e.target.value)} />
+          <Input
+            id="total_amount"
+            type="number"
+            step="0.01"
+            min={0}
+            value={total}
+            onChange={(e) => {
+              setTotalTouched(true);
+              setTotal(e.target.value);
+            }}
+          />
         </FormField>
       </div>
+      {showRecalc && suggestion && (
+        <p className="text-xs text-muted-foreground flex items-center gap-2 -mt-2">
+          <span>
+            Sugerido: {suggestion.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} (
+            {suggestion.nights} {suggestion.nights === 1 ? "noite" : "noites"} ×{" "}
+            {suggestion.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })})
+          </span>
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={() => setTotal(String(suggestion.total))}
+          >
+            Recalcular
+          </Button>
+        </p>
+      )}
       <FormField id="status" label="Status inicial" required error={errors.status}>
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger id="status"><SelectValue /></SelectTrigger>

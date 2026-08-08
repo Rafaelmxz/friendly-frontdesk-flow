@@ -39,7 +39,7 @@ function NewReservation() {
       <ReservationForm
         mode="create"
         guests={guests.map((g) => ({ id: g.id, full_name: g.full_name }))}
-        rooms={rooms.map((r) => ({ id: r.id, number: r.number, room_type_name: r.room_type_name }))}
+        rooms={rooms.map((r) => ({ id: r.id, number: r.number, room_type_name: r.room_type_name, base_price: r.base_price }))}
       />
     </div>
   );
