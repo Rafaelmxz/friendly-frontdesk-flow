@@ -55,7 +55,7 @@ function EditReservation() {
           mode="edit"
           id={id}
           guests={guests.map((g) => ({ id: g.id, full_name: g.full_name }))}
-          rooms={rooms.map((r) => ({ id: r.id, number: r.number, room_type_name: r.room_type_name }))}
+          rooms={rooms.map((r) => ({ id: r.id, number: r.number, room_type_name: r.room_type_name, base_price: r.base_price }))}
           initial={{
             guest_id: reservation.guest_id,
             room_id: reservation.room_id,
