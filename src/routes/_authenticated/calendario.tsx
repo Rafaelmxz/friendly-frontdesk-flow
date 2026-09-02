@@ -63,7 +63,7 @@ function rangeFor(view: ViewMode, ref: Date): { start: Date; days: Date[]; from:
     const days = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
     return { start: gridStart, days, from: toISO(gridStart), to: toISO(addDays(gridStart, 42)) };
   }
-  const start = mondayOf(ref);
+  const start = view === "timeline" ? new Date(ref.getFullYear(), ref.getMonth(), ref.getDate()) : mondayOf(ref);
   const days = Array.from({ length: DAYS }, (_, i) => addDays(start, i));
   return { start, days, from: toISO(start), to: toISO(addDays(start, DAYS)) };
 }

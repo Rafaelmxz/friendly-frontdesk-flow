@@ -58,13 +58,12 @@ export function TimelineGrid({
   onPanDays,
 }: Props) {
   const cols = days.length;
-  const template = `${SIDEBAR}px repeat(${cols}, minmax(0, 1fr))`;
 
   const gridRef = useRef<HTMLDivElement>(null);
+  const dayCellRef = useRef<HTMLDivElement>(null);
   const colWidth = useCallback(() => {
-    const w = gridRef.current?.clientWidth ?? 0;
-    return Math.max(1, (w - SIDEBAR) / cols);
-  }, [cols]);
+    return Math.max(1, dayCellRef.current?.getBoundingClientRect().width ?? 1);
+  }, []);
   const { dragging, ref: panRef } = useDragPan({
     colWidth,
     onPanDays: (n) => onPanDays?.(n),
@@ -92,28 +91,32 @@ export function TimelineGrid({
   return (
     <div
       ref={setRefs}
-      className={`min-w-[880px] select-none will-change-transform ${
+      className={`min-w-[880px] select-none overflow-hidden ${
         onPanDays ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
       }`}
       style={{ touchAction: "pan-y" }}
     >
-
-
-      <div className="grid border-b bg-muted/40 text-xs font-medium" style={{ gridTemplateColumns: template }}>
-        <div className="border-r p-2">Quarto</div>
-        {days.map((d) => {
-          const iso = toISO(d);
-          return (
-            <div
-              key={iso}
-              className={`border-r p-2 text-center capitalize last:border-r-0 ${dayBg(d)} ${
-                iso === todayISO ? "font-semibold" : ""
-              }`}
-            >
-              {dayFmt.format(d)}
-            </div>
-          );
-        })}
+      <div className="grid border-b bg-muted/40 text-xs font-medium" style={{ gridTemplateColumns: `${SIDEBAR}px minmax(0, 1fr)` }}>
+        <div className="relative z-10 border-r bg-muted/40 p-2">Quarto</div>
+        <div
+          className="grid will-change-transform [transform:translateX(var(--timeline-pan-x,0px))]"
+          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+        >
+          {days.map((d, index) => {
+            const iso = toISO(d);
+            return (
+              <div
+                key={iso}
+                ref={index === 0 ? dayCellRef : undefined}
+                className={`border-r p-2 text-center capitalize last:border-r-0 ${dayBg(d)} ${
+                  iso === todayISO ? "font-semibold" : ""
+                }`}
+              >
+                {dayFmt.format(d)}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {rooms.map((room) => {
@@ -124,9 +127,9 @@ export function TimelineGrid({
           <div
             key={room.id}
             className="relative grid border-b last:border-b-0"
-            style={{ gridTemplateColumns: template, height: ROW_H }}
+            style={{ gridTemplateColumns: `${SIDEBAR}px minmax(0, 1fr)`, height: ROW_H }}
           >
-            <div className="flex items-center gap-1.5 overflow-hidden border-r px-2 text-xs">
+            <div className="relative z-10 flex items-center gap-1.5 overflow-hidden border-r bg-card px-2 text-xs">
               <span className="font-medium">{room.number}</span>
               <span className="truncate text-muted-foreground">{room.room_type_name}</span>
               {Icon && (
@@ -136,11 +139,11 @@ export function TimelineGrid({
                 </span>
               )}
             </div>
-            {days.map((d) => (
-              <div key={toISO(d)} className={`border-r last:border-r-0 ${dayBg(d)}`} />
-            ))}
-
-            <div className="pointer-events-none absolute inset-y-1" style={{ left: SIDEBAR, right: 0 }}>
+            <div className="relative grid will-change-transform [transform:translateX(var(--timeline-pan-x,0px))]" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+              {days.map((d) => (
+                <div key={toISO(d)} className={`border-r last:border-r-0 ${dayBg(d)}`} />
+              ))}
+              <div className="pointer-events-none absolute inset-1">
               <div
                 className="relative grid h-full"
                 style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
@@ -173,6 +176,7 @@ export function TimelineGrid({
                     </ReservationHoverCard>
                   );
                 })}
+              </div>
               </div>
             </div>
           </div>
