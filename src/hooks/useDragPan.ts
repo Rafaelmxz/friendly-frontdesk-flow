@@ -38,7 +38,7 @@ export function useDragPan({ colWidth, onPanDays }: Options) {
 
     const paint = () => {
       frame = 0;
-      if (el) el.style.transform = `translateX(${dx}px)`;
+      el.style.setProperty("--timeline-pan-x", `${dx}px`);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(paint);
@@ -46,7 +46,7 @@ export function useDragPan({ colWidth, onPanDays }: Options) {
     const clearTransform = () => {
       if (frame) cancelAnimationFrame(frame);
       frame = 0;
-      el.style.transform = "";
+      el.style.removeProperty("--timeline-pan-x");
     };
 
     const begin = (x: number, y: number, target: EventTarget | null) => {
