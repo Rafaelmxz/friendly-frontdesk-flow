@@ -237,7 +237,7 @@ function CalendarPage() {
               <Button variant="outline" size="sm" onClick={prev}>
                 ◀ {view === "mensal" ? "Mês anterior" : "Semana anterior"}
               </Button>
-              <Button variant="outline" size="sm" onClick={() => gotoDate(new Date())}>
+              <Button variant="outline" size="sm" onClick={goToday}>
                 Hoje
               </Button>
               <Button variant="outline" size="sm" onClick={next}>
@@ -366,7 +366,7 @@ function CalendarPage() {
       {view === "timeline" && (
         <>
           <Card>
-            <CardContent className="p-0 overflow-x-auto">
+            <CardContent className="p-0">
               <TimelineGrid
                 rooms={rooms.map((r) => ({
                   id: r.id,
@@ -383,9 +383,11 @@ function CalendarPage() {
                 diffDays={diffDays}
                 dayFmt={dayFmt}
                 onSelect={setSelectedReservation}
-                onPanDays={(n) => gotoDate(addDays(start, n))}
+                scrollerRef={scrollerRef}
+                onSettle={onSettle}
               />
             </CardContent>
+
           </Card>
 
           <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
