@@ -1,14 +1,15 @@
 import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { listRooms } from "@/lib/rooms.functions";
 import { getReservationsCalendar } from "@/lib/dashboard.functions";
-import { TimelineGrid, type TimelineReservation } from "@/components/calendar/TimelineGrid";
+import { TimelineGrid, DAY_W, type TimelineReservation } from "@/components/calendar/TimelineGrid";
 import { ReservationDrawer } from "@/components/calendar/ReservationDrawer";
 import { STATUS_META } from "@/components/calendar/reservation-card";
+
 
 const roomsQuery = () => queryOptions({ queryKey: ["rooms"], queryFn: () => listRooms() });
 const calendarQuery = (from: string, to: string) =>
@@ -18,6 +19,8 @@ const calendarQuery = (from: string, to: string) =>
   });
 
 const DAYS = 7;
+const TIMELINE_DAYS = 21;
+
 
 type ViewMode = "mensal" | "timeline" | "semana";
 
@@ -63,10 +66,17 @@ function rangeFor(view: ViewMode, ref: Date): { start: Date; days: Date[]; from:
     const days = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
     return { start: gridStart, days, from: toISO(gridStart), to: toISO(addDays(gridStart, 42)) };
   }
-  const start = view === "timeline" ? new Date(ref.getFullYear(), ref.getMonth(), ref.getDate()) : mondayOf(ref);
+  if (view === "timeline") {
+    // Janela larga e ancorada em semanas: rolar dia a dia não muda o período carregado.
+    const base = mondayOf(addDays(ref, -7));
+    const days = Array.from({ length: TIMELINE_DAYS }, (_, i) => addDays(base, i));
+    return { start: base, days, from: toISO(base), to: toISO(addDays(base, TIMELINE_DAYS)) };
+  }
+  const start = mondayOf(ref);
   const days = Array.from({ length: DAYS }, (_, i) => addDays(start, i));
   return { start, days, from: toISO(start), to: toISO(addDays(start, DAYS)) };
 }
+
 
 const searchSchema = z.object({
   start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
