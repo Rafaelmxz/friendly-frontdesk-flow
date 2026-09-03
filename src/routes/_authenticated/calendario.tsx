@@ -1,14 +1,15 @@
 import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { listRooms } from "@/lib/rooms.functions";
 import { getReservationsCalendar } from "@/lib/dashboard.functions";
-import { TimelineGrid, type TimelineReservation } from "@/components/calendar/TimelineGrid";
+import { TimelineGrid, DAY_W, type TimelineReservation } from "@/components/calendar/TimelineGrid";
 import { ReservationDrawer } from "@/components/calendar/ReservationDrawer";
 import { STATUS_META } from "@/components/calendar/reservation-card";
+
 
 const roomsQuery = () => queryOptions({ queryKey: ["rooms"], queryFn: () => listRooms() });
 const calendarQuery = (from: string, to: string) =>
@@ -18,6 +19,8 @@ const calendarQuery = (from: string, to: string) =>
   });
 
 const DAYS = 7;
+const TIMELINE_DAYS = 21;
+
 
 type ViewMode = "mensal" | "timeline" | "semana";
 
@@ -63,10 +66,17 @@ function rangeFor(view: ViewMode, ref: Date): { start: Date; days: Date[]; from:
     const days = Array.from({ length: 42 }, (_, i) => addDays(gridStart, i));
     return { start: gridStart, days, from: toISO(gridStart), to: toISO(addDays(gridStart, 42)) };
   }
-  const start = view === "timeline" ? new Date(ref.getFullYear(), ref.getMonth(), ref.getDate()) : mondayOf(ref);
+  if (view === "timeline") {
+    // Janela larga e ancorada em semanas: rolar dia a dia não muda o período carregado.
+    const base = mondayOf(addDays(ref, -7));
+    const days = Array.from({ length: TIMELINE_DAYS }, (_, i) => addDays(base, i));
+    return { start: base, days, from: toISO(base), to: toISO(addDays(base, TIMELINE_DAYS)) };
+  }
+  const start = mondayOf(ref);
   const days = Array.from({ length: DAYS }, (_, i) => addDays(start, i));
   return { start, days, from: toISO(start), to: toISO(addDays(start, DAYS)) };
 }
+
 
 const searchSchema = z.object({
   start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -159,17 +169,60 @@ function CalendarPage() {
     navigate({ search: { view, start: toISO(d) } });
   };
 
+  // --- Timeline: rolagem nativa ---
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const refISO = toISO(ref);
+  const offsetDays = view === "timeline" ? diffDays(ref, start) : 0;
+
+  // Reposiciona a rolagem quando a janela carregada muda (sem salto visual).
+  useEffect(() => {
+    if (view !== "timeline") return;
+    const node = scrollerRef.current;
+    if (!node) return;
+    const target = offsetDays * DAY_W;
+    if (Math.abs(node.scrollLeft - target) > DAY_W / 2) node.scrollLeft = target;
+  }, [view, from, offsetDays]);
+
+  // Fim da rolagem: grava o primeiro dia visível na URL.
+  const onSettle = useCallback(
+    (index: number) => {
+      if (view !== "timeline") return;
+      const iso = toISO(addDays(parseISO(from), index));
+      if (iso === refISO) return;
+      navigate({ search: { view, start: iso }, replace: true });
+    },
+    [view, from, refISO, navigate],
+  );
+
+  const timelineGoto = (d: Date) => {
+    const node = scrollerRef.current;
+    const off = diffDays(d, start);
+    if (node && off >= 0 && off < days.length) {
+      node.scrollTo({ left: off * DAY_W, behavior: "smooth" });
+      return;
+    }
+    gotoDate(d);
+  };
 
   const monthRef = new Date(ref.getFullYear(), ref.getMonth(), 1);
   const periodLabel =
     view === "mensal"
       ? monthFmt.format(monthRef)
-      : `${shortFmt.format(start)} – ${shortFmt.format(addDays(start, 6))}`;
+      : view === "timeline"
+        ? `${shortFmt.format(ref)} – ${shortFmt.format(addDays(ref, 6))}`
+        : `${shortFmt.format(start)} – ${shortFmt.format(addDays(start, 6))}`;
 
-  const prev = () => gotoDate(view === "mensal" ? addMonths(monthRef, -1) : addDays(start, -7));
-  const next = () => gotoDate(view === "mensal" ? addMonths(monthRef, 1) : addDays(start, 7));
+  const step = (dir: 1 | -1) => {
+    if (view === "mensal") return gotoDate(addMonths(monthRef, dir));
+    if (view === "timeline") return timelineGoto(addDays(ref, dir * 7));
+    return gotoDate(addDays(start, dir * 7));
+  };
+  const prev = () => step(-1);
+  const next = () => step(1);
+  const goToday = () => (view === "timeline" ? timelineGoto(new Date()) : gotoDate(new Date()));
 
   const todayISO = toISO(new Date());
+
 
   return (
     <div className="space-y-4">
@@ -184,7 +237,7 @@ function CalendarPage() {
               <Button variant="outline" size="sm" onClick={prev}>
                 ◀ {view === "mensal" ? "Mês anterior" : "Semana anterior"}
               </Button>
-              <Button variant="outline" size="sm" onClick={() => gotoDate(new Date())}>
+              <Button variant="outline" size="sm" onClick={goToday}>
                 Hoje
               </Button>
               <Button variant="outline" size="sm" onClick={next}>
@@ -313,7 +366,7 @@ function CalendarPage() {
       {view === "timeline" && (
         <>
           <Card>
-            <CardContent className="p-0 overflow-x-auto">
+            <CardContent className="p-0">
               <TimelineGrid
                 rooms={rooms.map((r) => ({
                   id: r.id,
@@ -330,9 +383,11 @@ function CalendarPage() {
                 diffDays={diffDays}
                 dayFmt={dayFmt}
                 onSelect={setSelectedReservation}
-                onPanDays={(n) => gotoDate(addDays(start, n))}
+                scrollerRef={scrollerRef}
+                onSettle={onSettle}
               />
             </CardContent>
+
           </Card>
 
           <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
