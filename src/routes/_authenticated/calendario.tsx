@@ -169,17 +169,60 @@ function CalendarPage() {
     navigate({ search: { view, start: toISO(d) } });
   };
 
+  // --- Timeline: rolagem nativa ---
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const refISO = toISO(ref);
+  const offsetDays = view === "timeline" ? diffDays(ref, start) : 0;
+
+  // Reposiciona a rolagem quando a janela carregada muda (sem salto visual).
+  useEffect(() => {
+    if (view !== "timeline") return;
+    const node = scrollerRef.current;
+    if (!node) return;
+    const target = offsetDays * DAY_W;
+    if (Math.abs(node.scrollLeft - target) > DAY_W / 2) node.scrollLeft = target;
+  }, [view, from, offsetDays]);
+
+  // Fim da rolagem: grava o primeiro dia visível na URL.
+  const onSettle = useCallback(
+    (index: number) => {
+      if (view !== "timeline") return;
+      const iso = toISO(addDays(parseISO(from), index));
+      if (iso === refISO) return;
+      navigate({ search: { view, start: iso }, replace: true });
+    },
+    [view, from, refISO, navigate],
+  );
+
+  const timelineGoto = (d: Date) => {
+    const node = scrollerRef.current;
+    const off = diffDays(d, start);
+    if (node && off >= 0 && off < days.length) {
+      node.scrollTo({ left: off * DAY_W, behavior: "smooth" });
+      return;
+    }
+    gotoDate(d);
+  };
 
   const monthRef = new Date(ref.getFullYear(), ref.getMonth(), 1);
   const periodLabel =
     view === "mensal"
       ? monthFmt.format(monthRef)
-      : `${shortFmt.format(start)} – ${shortFmt.format(addDays(start, 6))}`;
+      : view === "timeline"
+        ? `${shortFmt.format(ref)} – ${shortFmt.format(addDays(ref, 6))}`
+        : `${shortFmt.format(start)} – ${shortFmt.format(addDays(start, 6))}`;
 
-  const prev = () => gotoDate(view === "mensal" ? addMonths(monthRef, -1) : addDays(start, -7));
-  const next = () => gotoDate(view === "mensal" ? addMonths(monthRef, 1) : addDays(start, 7));
+  const step = (dir: 1 | -1) => {
+    if (view === "mensal") return gotoDate(addMonths(monthRef, dir));
+    if (view === "timeline") return timelineGoto(addDays(ref, dir * 7));
+    return gotoDate(addDays(start, dir * 7));
+  };
+  const prev = () => step(-1);
+  const next = () => step(1);
+  const goToday = () => (view === "timeline" ? timelineGoto(new Date()) : gotoDate(new Date()));
 
   const todayISO = toISO(new Date());
+
 
   return (
     <div className="space-y-4">
