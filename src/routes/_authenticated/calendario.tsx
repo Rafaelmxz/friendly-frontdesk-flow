@@ -220,7 +220,9 @@ function CalendarPage() {
 
     pendingScrollRef.current = iso;
     setAnchorISO(toISO(timelineAnchor(d)));
+    navigate({ search: { view, start: iso }, replace: true });
   };
+
 
   // Fim da rolagem: grava o primeiro dia visível na URL e reancora perto das bordas.
   const onSettle = useCallback(
