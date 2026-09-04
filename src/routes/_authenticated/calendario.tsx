@@ -92,12 +92,15 @@ export const Route = createFileRoute("/_authenticated/calendario")({
   loaderDeps: ({ search }) => ({ start: search.start, view: search.view }),
   loader: async ({ context, deps }) => {
     const ref = deps.start ? parseISO(deps.start) : new Date();
-    const { from, to } = rangeFor(normalizeView(deps.view), ref);
+    const view = normalizeView(deps.view);
+    const { from, to } = rangeFor(view, ref);
     await Promise.all([
       context.queryClient.ensureQueryData(roomsQuery()),
-      context.queryClient.ensureQueryData(calendarQuery(from, to)),
+      // A Timeline gerencia a própria janela (21 dias) no cliente: não pré-carrega por dia.
+      ...(view === "timeline" ? [] : [context.queryClient.ensureQueryData(calendarQuery(from, to))]),
     ]);
   },
+
   component: CalendarPage,
   errorComponent: ({ error, reset }) => {
     const router = useRouter();
