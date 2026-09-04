@@ -175,24 +175,36 @@ function CalendarPage() {
   const offsetDays = view === "timeline" ? diffDays(ref, start) : 0;
 
   // Reposiciona a rolagem quando a janela carregada muda (sem salto visual).
+  const programmaticRef = useRef(false);
   useEffect(() => {
     if (view !== "timeline") return;
     const node = scrollerRef.current;
     if (!node) return;
     const target = offsetDays * DAY_W;
-    if (Math.abs(node.scrollLeft - target) > DAY_W / 2) node.scrollLeft = target;
+    if (Math.abs(node.scrollLeft - target) > DAY_W / 2) {
+      programmaticRef.current = true;
+      node.scrollLeft = target;
+      window.setTimeout(() => {
+        programmaticRef.current = false;
+      }, 400);
+    }
   }, [view, from, offsetDays]);
 
   // Fim da rolagem: grava o primeiro dia visível na URL.
   const onSettle = useCallback(
     (index: number) => {
       if (view !== "timeline") return;
+      if (programmaticRef.current) {
+        programmaticRef.current = false;
+        return;
+      }
       const iso = toISO(addDays(parseISO(from), index));
       if (iso === refISO) return;
       navigate({ search: { view, start: iso }, replace: true });
     },
     [view, from, refISO, navigate],
   );
+
 
   const timelineGoto = (d: Date) => {
     const node = scrollerRef.current;
