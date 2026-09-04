@@ -144,7 +144,16 @@ function CalendarPage() {
 
   const view = normalizeView(search.view);
   const ref = search.start ? parseISO(search.start) : new Date();
-  const { start, days, from, to } = rangeFor(view, ref);
+  const refISO = toISO(ref);
+
+  // --- Timeline: janela carregada em estado próprio, independente da URL ---
+  const timelineAnchor = (d: Date) => mondayOf(addDays(d, -7));
+  const [anchorISO, setAnchorISO] = useState(() => toISO(timelineAnchor(ref)));
+  const anchor = parseISO(anchorISO);
+  const timelineDays = Array.from({ length: TIMELINE_DAYS }, (_, i) => addDays(anchor, i));
+
+  const base = view === "timeline" ? { start: anchor, days: timelineDays, from: anchorISO, to: toISO(addDays(anchor, TIMELINE_DAYS)) } : rangeFor(view, ref);
+  const { start, days, from, to } = base;
 
   const { data: rooms } = useSuspenseQuery(roomsQuery());
   const { data: reservations } = useSuspenseQuery(calendarQuery(from, to));
@@ -162,6 +171,7 @@ function CalendarPage() {
 
   const setView = (v: ViewMode) => {
     setSelectedDay(null);
+    if (v === "timeline") setAnchorISO(toISO(timelineAnchor(ref)));
     navigate({ search: { view: v, start: toISO(ref) } });
   };
   const gotoDate = (d: Date) => {
@@ -169,52 +179,58 @@ function CalendarPage() {
     navigate({ search: { view, start: toISO(d) } });
   };
 
-  // --- Timeline: rolagem nativa ---
   const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const refISO = toISO(ref);
-  const offsetDays = view === "timeline" ? diffDays(ref, start) : 0;
-
-  // Reposiciona a rolagem quando a janela carregada muda (sem salto visual).
+  const pendingScrollRef = useRef<string | null>(refISO);
   const programmaticRef = useRef(false);
-  useEffect(() => {
-    if (view !== "timeline") return;
+
+  const scrollToDay = useCallback((iso: string, anchorStart: Date, smooth: boolean) => {
     const node = scrollerRef.current;
     if (!node) return;
-    const target = offsetDays * DAY_W;
-    if (Math.abs(node.scrollLeft - target) > DAY_W / 2) {
-      programmaticRef.current = true;
-      node.scrollLeft = target;
-      window.setTimeout(() => {
-        programmaticRef.current = false;
-      }, 400);
-    }
-  }, [view, from, offsetDays]);
+    const left = Math.max(0, diffDays(parseISO(iso), anchorStart) * DAY_W);
+    programmaticRef.current = true;
+    node.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
+    window.setTimeout(() => {
+      programmaticRef.current = false;
+    }, smooth ? 900 : 250);
+  }, []);
 
-  // Fim da rolagem: grava o primeiro dia visível na URL.
-  const onSettle = useCallback(
-    (index: number) => {
-      if (view !== "timeline") return;
-      if (programmaticRef.current) {
-        programmaticRef.current = false;
-        return;
-      }
-      const iso = toISO(addDays(parseISO(from), index));
-      if (iso === refISO) return;
-      navigate({ search: { view, start: iso }, replace: true });
-    },
-    [view, from, refISO, navigate],
-  );
+  // Aplica um reposicionamento pendente após a janela mudar (sem salto visual).
+  useEffect(() => {
+    if (view !== "timeline") return;
+    const iso = pendingScrollRef.current;
+    if (!iso) return;
+    pendingScrollRef.current = null;
+    scrollToDay(iso, parseISO(anchorISO), false);
+  }, [view, anchorISO, scrollToDay]);
 
-
+  /** Leva a Timeline até um dia: rola dentro da janela ou reancora antes. */
   const timelineGoto = (d: Date) => {
-    const node = scrollerRef.current;
-    const off = diffDays(d, start);
-    if (node && off >= 0 && off < days.length) {
-      node.scrollTo({ left: off * DAY_W, behavior: "smooth" });
+    const iso = toISO(d);
+    const off = diffDays(d, anchor);
+    if (off >= 0 && off <= TIMELINE_DAYS - 7) {
+      scrollToDay(iso, anchor, true);
+      navigate({ search: { view, start: iso }, replace: true });
       return;
     }
-    gotoDate(d);
+    pendingScrollRef.current = iso;
+    setAnchorISO(toISO(timelineAnchor(d)));
+    navigate({ search: { view, start: iso }, replace: true });
   };
+
+  // Fim da rolagem: grava o primeiro dia visível na URL e reancora perto das bordas.
+  const onSettle = useCallback(
+    (index: number) => {
+      if (view !== "timeline" || programmaticRef.current) return;
+      const day = addDays(parseISO(anchorISO), index);
+      const iso = toISO(day);
+      if (iso !== refISO) navigate({ search: { view, start: iso }, replace: true });
+      if (index < 3 || index > TIMELINE_DAYS - 10) {
+        pendingScrollRef.current = iso;
+        setAnchorISO(toISO(timelineAnchor(day)));
+      }
+    },
+    [view, anchorISO, refISO, navigate],
+  );
 
   const monthRef = new Date(ref.getFullYear(), ref.getMonth(), 1);
   const periodLabel =
@@ -232,6 +248,7 @@ function CalendarPage() {
   const prev = () => step(-1);
   const next = () => step(1);
   const goToday = () => (view === "timeline" ? timelineGoto(new Date()) : gotoDate(new Date()));
+
 
   const todayISO = toISO(new Date());
 
