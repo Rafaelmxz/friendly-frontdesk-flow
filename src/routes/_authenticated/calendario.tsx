@@ -210,10 +210,14 @@ function CalendarPage() {
   const timelineGoto = (d: Date) => {
     const iso = toISO(d);
     const off = diffDays(d, anchor);
-    if (off >= 0 && off <= TIMELINE_DAYS - 7) {
+    const node = scrollerRef.current;
+    // Só rola dentro da janela se o dia puder mesmo ficar na borda esquerda.
+    const maxIndex = node ? Math.floor((node.scrollWidth - node.clientWidth) / DAY_W) : 0;
+    if (off >= 0 && off <= maxIndex) {
       scrollToDay(iso, anchor, true);
       return;
     }
+
     pendingScrollRef.current = iso;
     setAnchorISO(toISO(timelineAnchor(d)));
   };
