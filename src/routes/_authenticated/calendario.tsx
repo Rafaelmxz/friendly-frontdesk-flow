@@ -150,7 +150,7 @@ function CalendarPage() {
   const refISO = toISO(ref);
 
   // --- Timeline: janela carregada em estado próprio, independente da URL ---
-  const timelineAnchor = (d: Date) => mondayOf(addDays(d, -7));
+  const timelineAnchor = (d: Date) => addDays(d, -7);
   const [anchorISO, setAnchorISO] = useState(() => toISO(timelineAnchor(ref)));
   const anchor = parseISO(anchorISO);
   const timelineDays = Array.from({ length: TIMELINE_DAYS }, (_, i) => addDays(anchor, i));
