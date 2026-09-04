@@ -209,27 +209,26 @@ function CalendarPage() {
     const off = diffDays(d, anchor);
     if (off >= 0 && off <= TIMELINE_DAYS - 7) {
       scrollToDay(iso, anchor, true);
-      navigate({ search: { view, start: iso }, replace: true });
       return;
     }
     pendingScrollRef.current = iso;
     setAnchorISO(toISO(timelineAnchor(d)));
-    navigate({ search: { view, start: iso }, replace: true });
   };
 
   // Fim da rolagem: grava o primeiro dia visível na URL e reancora perto das bordas.
   const onSettle = useCallback(
     (index: number) => {
-      if (view !== "timeline" || programmaticRef.current) return;
+      if (view !== "timeline") return;
       const day = addDays(parseISO(anchorISO), index);
       const iso = toISO(day);
       if (iso !== refISO) navigate({ search: { view, start: iso }, replace: true });
-      if (index < 3 || index > TIMELINE_DAYS - 10) {
+      if (!programmaticRef.current && (index < 3 || index > TIMELINE_DAYS - 10)) {
         pendingScrollRef.current = iso;
         setAnchorISO(toISO(timelineAnchor(day)));
       }
     },
     [view, anchorISO, refISO, navigate],
+
   );
 
   const monthRef = new Date(ref.getFullYear(), ref.getMonth(), 1);
