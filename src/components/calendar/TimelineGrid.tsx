@@ -109,7 +109,7 @@ export function TimelineGrid({
     <div
       ref={el}
       className="overflow-x-auto overscroll-x-contain"
-      style={{ scrollSnapType: "x mandatory", scrollPaddingLeft: SIDEBAR }}
+      style={{ scrollSnapType: "x proximity", scrollPaddingLeft: SIDEBAR }}
     >
       <div style={{ width: SIDEBAR + cols * DAY_W }}>
         <div className="grid border-b bg-muted/40 text-xs font-medium" style={{ gridTemplateColumns: gridCols }}>
@@ -138,7 +138,12 @@ export function TimelineGrid({
             <div
               key={room.id}
               className="relative grid border-b last:border-b-0"
-              style={{ gridTemplateColumns: gridCols, height: ROW_H }}
+              style={{
+                gridTemplateColumns: gridCols,
+                height: ROW_H,
+                contentVisibility: "auto",
+                containIntrinsicSize: `${ROW_H}px`,
+              }}
             >
               <div className="sticky left-0 z-20 flex items-center gap-1.5 overflow-hidden border-r bg-card px-2 text-xs">
                 <span className="font-medium">{room.number}</span>
