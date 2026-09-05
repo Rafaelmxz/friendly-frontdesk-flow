@@ -224,20 +224,14 @@ function CalendarPage() {
   };
 
 
-  // Fim da rolagem: grava o primeiro dia visível na URL e reancora perto das bordas.
+  // Fim da rolagem: só grava o primeiro dia visível na URL. Nada de reancorar aqui.
   const onSettle = useCallback(
     (index: number) => {
       if (view !== "timeline") return;
-      const day = addDays(parseISO(anchorISO), index);
-      const iso = toISO(day);
+      const iso = toISO(addDays(parseISO(anchorISO), index));
       if (iso !== refISO) navigate({ search: { view, start: iso }, replace: true });
-      if (!programmaticRef.current && (index < 3 || index > TIMELINE_DAYS - 10)) {
-        pendingScrollRef.current = iso;
-        setAnchorISO(toISO(timelineAnchor(day)));
-      }
     },
     [view, anchorISO, refISO, navigate],
-
   );
 
   const monthRef = new Date(ref.getFullYear(), ref.getMonth(), 1);
