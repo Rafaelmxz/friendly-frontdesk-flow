@@ -48,3 +48,73 @@ export const getReservationsCalendar = createServerFn({ method: "GET" })
       status: "confirmada" | "checkin" | "checkout" | "cancelada" | "no_show" | "pendente";
     }>;
   });
+
+/** Métricas mensais do ano (ocupação % + receita) */
+export const getAnnualPerformance = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({ year: z.number().int().min(2020).max(2100).optional() })
+      .optional()
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const year = data?.year ?? new Date().getFullYear();
+    const supabase = context.supabase as SB;
+
+    const { count: totalRooms, error: roomsErr } = await supabase
+      .from("rooms")
+      .select("id", { count: "exact", head: true });
+    if (roomsErr) throw new Error(roomsErr.message);
+    const roomCount = totalRooms ?? 1;
+
+    const from = `${year}-01-01`;
+    const to = `${year}-12-31`;
+    const { data: reservations, error: resErr } = await supabase
+      .from("reservations")
+      .select("check_in, check_out, total_amount, status")
+      .gte("check_in", from)
+      .lte("check_in", to)
+      .not("status", "eq", "cancelada");
+    if (resErr) throw new Error(resErr.message);
+
+    const months = Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      label: new Date(year, i, 1).toLocaleString("pt-BR", { month: "short" }),
+      occupiedNights: 0,
+      revenue: 0,
+      occupancyRate: 0,
+    }));
+
+    for (const r of reservations ?? []) {
+      const checkIn = new Date(r.check_in + "T12:00:00");
+      const checkOut = new Date(r.check_out + "T12:00:00");
+      const nights = Math.max(
+        1,
+        Math.round((checkOut.getTime() - checkIn.getTime()) / 86_400_000),
+      );
+      const monthIdx = checkIn.getMonth();
+      months[monthIdx].occupiedNights += nights;
+      months[monthIdx].revenue += Number(r.total_amount ?? 0);
+    }
+
+    for (const m of months) {
+      const daysInMonth = new Date(year, m.month, 0).getDate();
+      const availableNights = roomCount * daysInMonth;
+      m.occupancyRate =
+        availableNights > 0
+          ? Math.round((m.occupiedNights / availableNights) * 1000) / 10
+          : 0;
+    }
+
+    return {
+      year,
+      totalRooms: roomCount,
+      months: months.map(({ label, occupancyRate, revenue, occupiedNights }) => ({
+        label,
+        occupancyRate,
+        revenue,
+        occupiedNights,
+      })),
+    };
+  });
